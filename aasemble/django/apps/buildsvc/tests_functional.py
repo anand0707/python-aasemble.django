@@ -88,10 +88,7 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
         self.selenium.set_window_size(1024, 768)
         self.overview_button.click()
         pageHeader = self.get_page_header_value()
-        print "\n####################\n"
-        print pageHeader.text
-        print "\n####################\n"
-        
+        self.assertEqual(pageHeader.text, "Dashboard", "Dashboard didn't showed up")
 
     def get_page_header_value(self):
         '''Find page header's value'''
