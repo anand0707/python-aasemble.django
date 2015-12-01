@@ -100,7 +100,7 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
     @property
     def overview_button(self):
         '''Finds overview button'''
-        return self.selenium.find_element(by.By.LINK_TEXT, 'Overview ')
+        return self.selenium.find_element(by.By.XPATH, "//a[@href='/' and contains(text(), 'Overview')]")
 
     def create_new_package_source(self, git_url, branch, series):
         '''This is the helper method to create
