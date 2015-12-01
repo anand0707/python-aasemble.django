@@ -88,11 +88,14 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
         self.selenium.set_window_size(1024, 768)
         self.overview_button.click()
         pageHeader = self.get_page_header_value()
-        pageHeader.find_element(by.By.LINK_TEXT, 'Dashboard')
+        print "\n####################\n"
+        print pageHeader.text
+        print "\n####################\n"
+        
 
     def get_page_header_value(self):
         '''Find page header's value'''
-        return self.selenium.find_element(by.By.XPATH, "//*[@class='page-header']")
+        return self.selenium.find_element(by.By.CLASS_NAME, "'page-header")
 
     @property
     def overview_button(self):
