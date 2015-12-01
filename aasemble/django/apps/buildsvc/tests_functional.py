@@ -95,7 +95,7 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
 
     def get_page_header_value(self):
         '''Find page header's value'''
-        return self.selenium.find_element(by.By.CLASS_NAME, "'page-header")
+        return self.selenium.find_element(by.By.CLASS_NAME, "page-header")
 
     @property
     def overview_button(self):
