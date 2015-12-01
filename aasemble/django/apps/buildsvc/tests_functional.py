@@ -88,7 +88,7 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
         self.selenium.set_window_size(1024, 768)
         self.overview_button.click()
         pageHeader = self.get_page_header_value()
-        pgaeHeader.find_element(by.By.LINK_TEXT, 'Dashboard')
+        pageHeader.find_element(by.By.LINK_TEXT, 'Dashboard')
 
     def get_page_header_value(self):
         '''Find page header's value'''
