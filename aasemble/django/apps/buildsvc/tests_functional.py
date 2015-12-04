@@ -236,6 +236,7 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
          '''
         self.test_new_mirrors
         self.test_mirror_set
+        self.create_login_session('brandon')
         self.selenium.get('%s%s' % (self.live_server_url, '/mirrorsvc/mirrorsets/'))
         self.selenium.set_window_size(1024, 768)
         print "\n############\n"
