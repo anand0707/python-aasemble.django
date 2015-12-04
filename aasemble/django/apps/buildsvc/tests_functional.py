@@ -230,15 +230,21 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
     def mirror_set_button(self):
         '''Finds the mirror set button'''
         return self.selenium.find_element(by.By.LINK_TEXT, 'Mirror-Sets')
-        
+
     def test_snapshot_operations(self):
         '''This test verifies the operations snapshot.
-         '''
+         ' Steps:
+         1. Create new mirror and mirrorset for user 'brandon'.
+         2. "View snapshot" for its first (only in this case) mirrorset.
+         3. Save the number of lines in tables ( reducing this number by
+            will give us number of snapshot.
+         4. Create a snaphot
+         5. Repeat step 3.
+         6. Difference should be exaclty one.'''
         self.test_new_mirrors()
         self.test_mirror_set()
         self.create_login_session('brandon')
         self.selenium.set_window_size(1024, 768)
-        self.selenium.get('%s%s' % (self.live_server_url, '/mirrorsvc/mirrors/'))
         self.selenium.get('%s%s' % (self.live_server_url, '/mirrorsvc/mirrorsets/'))
         viewButton = self.selenium.find_element(by.By.XPATH, "//a[contains(text(), 'View snapshots')]")
         viewButton.click()
@@ -247,7 +253,7 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
         self.new_submit_button.click()
         existingSnaps = self.selenium.find_elements(by.By.XPATH, "//table[@class='table table-striped']//tr")
         noOfExistingSnapsAfter = len(existingSnaps)
-        self.assertEqual( noOfExistingSnapsAfter - noOfExistingSnapsPrevious, 1, "SnapShot didn't created")
+        self.assertEqual(noOfExistingSnapsAfter - noOfExistingSnapsPrevious, 1, "SnapShot didn't created")
 
     def create_new_package_source(self, git_url, branch, series):
         '''This is the helper method to create
