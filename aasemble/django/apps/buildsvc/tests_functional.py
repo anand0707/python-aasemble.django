@@ -230,6 +230,33 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
     def mirror_set_button(self):
         '''Finds the mirror set button'''
         return self.selenium.find_element(by.By.LINK_TEXT, 'Mirror-Sets')
+        
+    def test_snapshot_operations(self):
+        '''This test verifies the operations snapshot.
+         '''
+        self.test_new_mirrors
+        self.test_mirror_set
+        self.selenium.get('%s%s' % (self.live_server_url, '/mirrorsvc/mirrorsets/'))
+        self.selenium.set_window_size(1024, 768)
+        print "\n############\n"
+        print self.selenium.page_source
+        print "\n############\n"
+        viewButton = self.selenium.find_element(by.By.XPATH, "//a[contains(text(), 'View snapshots')]")
+        viewButton.click()
+        existingSnaps = self.selenium.find_elements(by.By.XPATH, "//table[@class='table table-striped']//tr")
+        noOfExistingSnapsPrevious = len(existingSnaps)
+        print self.new_submit_button
+        self.new_submit_button.click()
+        print "\n############\n"
+        print self.selenium.page_source
+        print "\n############\n"
+        existingSnaps = self.selenium.find_elements(by.By.XPATH, "//table[@class='table table-striped']//tr")
+        noOfExistingSnapsAfter = len(existingSnaps)
+        print "\n############\n"
+        print noOfExistingSnapsPrevious
+        print "\n############\n"
+        print noOfExistingSnapsAfter
+        print "\n############\n"
 
     def create_new_package_source(self, git_url, branch, series):
         '''This is the helper method to create
