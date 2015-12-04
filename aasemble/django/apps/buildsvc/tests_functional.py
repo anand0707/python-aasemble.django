@@ -234,14 +234,19 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
     def test_snapshot_operations(self):
         '''This test verifies the operations snapshot.
          '''
-        self.test_new_mirrors
-        self.test_mirror_set
+        self.test_new_mirrors()
+        self.test_mirror_set()
         self.create_login_session('brandon')
-        self.selenium.get('%s%s' % (self.live_server_url, '/mirrorsvc/mirrors/'))
         self.selenium.set_window_size(1024, 768)
+        self.selenium.get('%s%s' % (self.live_server_url, '/mirrorsvc/mirrors/'))
         print "\n############\n"
         print self.selenium.page_source
         print "\n############\n"
+        self.selenium.get('%s%s' % (self.live_server_url, '/mirrorsvc/mirrorsets/'))
+        print "\n############\n"
+        print self.selenium.page_source
+        print "\n############\n"
+        
         viewButton = self.selenium.find_element(by.By.XPATH, "//a[contains(text(), 'View snapshots')]")
         viewButton.click()
         existingSnaps = self.selenium.find_elements(by.By.XPATH, "//table[@class='table table-striped']//tr")
