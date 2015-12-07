@@ -105,6 +105,19 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
         # Test if public flag is false
         self.assertTrue(self._is_element_visible((by.By.XPATH, ".//table/tbody/tr[1]/td[5][contains(text(), False)]")))
 
+    def test_mirror_another_user(self):
+        self.test_new_mirrors()
+        self.create_login_session('aaron')
+        self.selenium.get(self.live_server_url)
+        self.selenium.set_window_size(1024, 768)
+        self.mirror_button.click()
+        self.assertFalse(self._is_element_visible((by.By.LINK_TEXT, '%s%s' % (self.live_server_url, '/apt/brandon/brandon'))))
+
+    @property
+    def mirror_button(self):
+        '''Finds package source button'''
+        return self.selenium.find_element(by.By.LINK_TEXT, 'Mirrors')
+
     def _is_element_visible(self, locator):
         try:
             return self.selenium.find_element(*locator).is_displayed()
