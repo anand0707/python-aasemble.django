@@ -138,19 +138,19 @@ class RepositoryFunctionalTests(WebObject):
             # self.build_button.click()
             # self.assertEqual(self.verify_build_displayed(packageName='python-aasemble.django.git'), True, 'Build not started')
 
-    # def test_overview_button(self):
-        # '''This test performs the test for overview button
-        # 1. Create a session cookie for given user. We are using a existing
+    def test_overview_button(self):
+        '''This test performs the test for overview button
+          1. Create a session cookie for given user. We are using a existing
                # user 'brandon' which is already added as fixture.
-        # 2. Press 'Overview' button.
-        # 3. Verify whether 'Dashboard' came.'''
-        # self.create_login_session('brandon')
-        # # test whether sources page opens after user logs in
-        # self.driver.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
-        # self.driver.set_window_size(1024, 768)
-        # self.overview_button.click()
-        # pageHeader = self.get_page_header_value()
-        # self.assertEqual(pageHeader.text, "Dashboard", "Dashboard didn't showed up")
+          2. Press 'Overview' button.
+          3. Verify whether 'Dashboard' came.'''
+        self.create_login_session('brandon')
+        overviewPage = OverviewPage(self.driver)
+        # test whether sources page opens after user logs in
+        overviewPage.driver.get(self.live_server_url)
+        overviewPage.overview_button.click()
+        pageHeader = overviewPage.get_page_header_value()
+        self.assertEqual(pageHeader.text, "Dashboard", "Dashboard didn't showed up")
 
     
     def test_logout_button(self):

@@ -24,7 +24,10 @@ class BasePage:
     def __init__(self, driver):
         """Constructor."""
         self.driver = driver
-
+        
+    def get_page_header_value(self):
+        '''Find page header's value'''
+        return self.driver.find_element(by.By.CLASS_NAME, "page-header")
 
     @property
     def new_submit_button(self):
@@ -135,3 +138,12 @@ class LogoutPage(BasePage):
         else:
             return True
 
+            
+class OverviewPage(BasePage):
+
+    @property
+    def overview_button(self):
+        '''Finds overview button'''
+        return self.driver.find_element(by.By.XPATH, "//a[@href='/' and contains(text(), 'Overview')]")
+        
+       
