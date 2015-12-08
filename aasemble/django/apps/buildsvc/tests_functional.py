@@ -22,39 +22,28 @@ from selenium.webdriver.support.ui import Select
 class RepositoryFunctionalTests(PageObject):
     fixtures = ['complete.json']
 
-    # @classmethod
-    # def setUpClass(cls):
-        # super(RepositoryFunctionalTests, cls).setUpClass()
-        # cls.selenium = WebDriver()
-        # cls.selenium.maximize_window()
-
-    # @classmethod
-    # def tearDownClass(cls):
-        # cls.selenium.quit()
-        # super(RepositoryFunctionalTests, cls).tearDownClass()
-
     def test_user_signs_up_for_signup(self):
-        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/signup/'))
-        username_input = self.selenium.find_element_by_id('id_email')
+        self.driver.get('%s%s' % (self.live_server_url, '/accounts/signup/'))
+        username_input = self.driver.find_element_by_id('id_email')
         username_input.send_keys('newuser@linux2go.dk')
-        password1_input = self.selenium.find_element_by_id('id_password1')
+        password1_input = self.driver.find_element_by_id('id_password1')
         password1_input.send_keys('secret')
-        password2_input = self.selenium.find_element_by_id('id_password2')
+        password2_input = self.driver.find_element_by_id('id_password2')
         password2_input.send_keys('secret')
-        signup_form = self.selenium.find_element_by_id('signup_form')
+        signup_form = self.driver.find_element_by_id('signup_form')
         signup_form.submit()
-        page_header = self.selenium.find_element_by_class_name('page-header')
+        page_header = self.driver.find_element_by_class_name('page-header')
         text_found = re.search(r'Dashboard', page_header.text)
         self.assertNotEqual(text_found, None)
 
     def test_secured_pages_open_after_login(self):
         session_cookie = create_session_cookie(username='test@email.com', password='top_secret')
-        self.selenium.get(self.live_server_url)
-        self.selenium.add_cookie(session_cookie)
+        self.driver.get(self.live_server_url)
+        self.driver.add_cookie(session_cookie)
 
         # test whether sources page opens after user logs in
-        self.selenium.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
-        page_header = self.selenium.find_element_by_class_name('page-header')
+        self.driver.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
+        page_header = self.driver.find_element_by_class_name('page-header')
         text_found = re.search(r'Sources', page_header.text)
         self.assertNotEqual(text_found, None)
 
@@ -69,8 +58,8 @@ class RepositoryFunctionalTests(PageObject):
            5. Verify if the package has been deleted'''
         self.create_login_session('brandon')
         # test whether sources page opens after user logs in
-        self.selenium.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
-        self.selenium.set_window_size(1024, 768)
+        self.driver.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
+        self.driver.set_window_size(1024, 768)
         self.sources_button.click()
         git_url = "https://github.com/aaSemble/python-aasemble.django.git"
         self.create_new_package_source(git_url=git_url, branch='master', series='brandon/aasemble')
@@ -86,8 +75,8 @@ class RepositoryFunctionalTests(PageObject):
         3. Verify page by username'''
         self.create_login_session('brandon')
         # test whether sources page opens after user logs in
-        self.selenium.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
-        self.selenium.set_window_size(1024, 768)
+        self.driver.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
+        self.driver.set_window_size(1024, 768)
         self.profile_button.click()
         self.assertEqual(self.verify_profile_page('brandon'), True, "Profile Name not verified")
 
@@ -95,14 +84,14 @@ class RepositoryFunctionalTests(PageObject):
         ''' This tests validates if non public mirror is created'''
         new_mirror_button = (by.By.LINK_TEXT, 'New')
         self.create_login_session('brandon')
-        self.selenium.get('%s%s' % (self.live_server_url, '/mirrorsvc/mirrors/'))
-        self.selenium.set_window_size(1024, 768)
+        self.driver.get('%s%s' % (self.live_server_url, '/mirrorsvc/mirrors/'))
+        self.driver.set_window_size(1024, 768)
         self.assertTrue(self._is_element_visible(new_mirror_button), "Mirror New Button is not Visible")
-        self.selenium.find_element(*new_mirror_button).click()
-        self.selenium.find_element(by.By.ID, 'id_url').send_keys('%s%s' % (self.live_server_url, '/apt/brandon/brandon'))
-        self.selenium.find_element(by.By.ID, 'id_series').send_keys('brandon/aasemble')
-        self.selenium.find_element(by.By.ID, 'id_components').send_keys('aasemble')
-        self.selenium.find_element(by.By.XPATH, './/button[@type="submit" and contains(.,"Submit")]').click()
+        self.driver.find_element(*new_mirror_button).click()
+        self.driver.find_element(by.By.ID, 'id_url').send_keys('%s%s' % (self.live_server_url, '/apt/brandon/brandon'))
+        self.driver.find_element(by.By.ID, 'id_series').send_keys('brandon/aasemble')
+        self.driver.find_element(by.By.ID, 'id_components').send_keys('aasemble')
+        self.driver.find_element(by.By.XPATH, './/button[@type="submit" and contains(.,"Submit")]').click()
         self.assertTrue(self._is_element_visible((by.By.LINK_TEXT, '%s%s' % (self.live_server_url, '/apt/brandon/brandon'))))
         # Test if public flag is false
         self.assertTrue(self._is_element_visible((by.By.XPATH, ".//table/tbody/tr[1]/td[5][contains(text(), False)]")))
@@ -110,8 +99,8 @@ class RepositoryFunctionalTests(PageObject):
     def test_mirror_another_user(self):
         self.test_new_mirrors()
         self.create_login_session('aaron')
-        self.selenium.get(self.live_server_url)
-        self.selenium.set_window_size(1024, 768)
+        self.driver.get(self.live_server_url)
+        self.driver.set_window_size(1024, 768)
         self.mirror_button.click()
         self.assertFalse(self._is_element_visible((by.By.LINK_TEXT, '%s%s' % (self.live_server_url, '/apt/brandon/brandon'))))
 
@@ -127,8 +116,8 @@ class RepositoryFunctionalTests(PageObject):
         4. Verify that Building started and it is visible via GUI'''
         self.create_login_session('brandon')
         # test whether sources page opens after user logs in
-        self.selenium.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
-        self.selenium.set_window_size(1024, 768)
+        self.driver.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
+        self.driver.set_window_size(1024, 768)
         self.sources_button.click()
         git_url = "https://github.com/aaSemble/python-aasemble.django.git"
         self.create_new_package_source(git_url=git_url, branch='master', series='brandon/aasemble')
@@ -143,7 +132,7 @@ class RepositoryFunctionalTests(PageObject):
             # be visible (even if it has just started)
             pass
         finally:
-            self.selenium.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
+            self.driver.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
             self.build_button.click()
             self.assertEqual(self.verify_build_displayed(packageName='python-aasemble.django.git'), True, 'Build not started')
 
@@ -155,8 +144,8 @@ class RepositoryFunctionalTests(PageObject):
         3. Verify whether 'Dashboard' came.'''
         self.create_login_session('brandon')
         # test whether sources page opens after user logs in
-        self.selenium.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
-        self.selenium.set_window_size(1024, 768)
+        self.driver.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
+        self.driver.set_window_size(1024, 768)
         self.overview_button.click()
         pageHeader = self.get_page_header_value()
         self.assertEqual(pageHeader.text, "Dashboard", "Dashboard didn't showed up")
@@ -170,8 +159,8 @@ class RepositoryFunctionalTests(PageObject):
         3. Verify that we came to login page.'''
         self.create_login_session('brandon')
         # test whether sources page opens after user logs in
-        self.selenium.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
-        self.selenium.set_window_size(1024, 768)
+        self.driver.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
+        self.driver.set_window_size(1024, 768)
         self.logout_button.click()
         self.assertEqual(self.verify_login_page(), True, "Logout didn't work")
 
