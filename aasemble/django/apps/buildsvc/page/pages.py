@@ -79,12 +79,12 @@ class SourcePage:
     def package_edit_button(self):
         '''Finds package edit button.
         NOTE: Only one package is expected at once'''
-        return self.selenium.find_element(by.By.CSS_SELECTOR, '.glyphicon.glyphicon-pencil')
+        return self.driver.find_element(by.By.CSS_SELECTOR, '.glyphicon.glyphicon-pencil')
         
     @property
     def delete_button(self):
         '''Finds package delete button'''
-        return self.selenium.find_element(by.By.CSS_SELECTOR, '.btn.btn-danger')
+        return self.driver.find_element(by.By.CSS_SELECTOR, '.btn.btn-danger')
 
     @property
     def sources_button(self):
