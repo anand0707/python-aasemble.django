@@ -4,12 +4,6 @@ import re
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test.utils import override_settings, skipIf
 
-import selenium.common.exceptions as Exceptions
-
-from selenium.webdriver.common import by
-from selenium.webdriver.firefox.webdriver import WebDriver
-from selenium.webdriver.support.ui import Select
-
 from aasemble.django.apps.buildsvc.tasks import poll_one
 
 from aasemble.django.tests import create_session_cookie, create_session_for_given_user
