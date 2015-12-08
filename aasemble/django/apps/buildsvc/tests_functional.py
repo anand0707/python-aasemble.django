@@ -8,7 +8,7 @@ from aasemble.django.apps.buildsvc.tasks import poll_one
 
 from aasemble.django.tests import create_session_cookie
 
-from aasemble.django.apps.buildsvc.page.pageobject import PageObject
+from aasemble.django.apps.buildsvc.page.baseWebObject import PageObject
 
 import selenium.common.exceptions as Exceptions
 
