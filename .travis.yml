@@ -39,7 +39,7 @@ install:
   - pip install codecov
 script:
   - mysql -u root -e'GRANT ALL ON test_aasemble.* TO test@localhost'
-  - xvfb-run python -m coverage run --source=aasemble manage.py test -v3 $TEST_ARG
+  - xvfb-run python -m coverage run --source=aasemble manage.py test -v3 aasemble.django.apps.buildsvc.tests_functional
   - "flake8 --ignore=E501 --application-import-names=aasemble aasemble"
   - "python -m coverage report -m"
 after_success:
