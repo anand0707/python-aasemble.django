@@ -12,7 +12,7 @@ from aasemble.django.apps.buildsvc.page.basewebobject import WebObject
 
 import selenium.common.exceptions as Exceptions
 
-from aasemble.django.apps.buildsvc.page.pages import SourcePage, ProfilePage, LogoutPage
+from aasemble.django.apps.buildsvc.page.pages import SourcePage, ProfilePage, LogoutPage, OverviewPage
 
 from selenium.webdriver.common import by
 from selenium.webdriver.firefox.webdriver import WebDriver
