@@ -19,10 +19,20 @@ from selenium.webdriver.common import by
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.ui import Select
 
-class SourcePage:
+class BasePage:
+
     def __init__(self, driver):
         """Constructor."""
         self.driver = driver
+
+
+    @property
+    def new_submit_button(self):
+        '''Finds NEW and Submit button. Both buttons have same class name
+        and live in diffrent views thus giving us opportunity of code reuse'''
+        return self.driver.find_element(by.By.CSS_SELECTOR, '.btn.btn-primary')
+
+class SourcePage(BasePage):
 
     def create_new_package_source(self, git_url, branch, series):
         '''This is the helper method to create
@@ -57,7 +67,7 @@ class SourcePage:
             return False
         else:
             return True
-            
+
     def delete_package_source(self):
         '''This is the helper method to delete a package.
         This consists of followwinng steps:
@@ -67,13 +77,13 @@ class SourcePage:
         self.sources_button.click()
         self.package_edit_button.click()
         self.delete_button.click()
-        
+
     @property
     def package_edit_button(self):
         '''Finds package edit button.
         NOTE: Only one package is expected at once'''
         return self.driver.find_element(by.By.CSS_SELECTOR, '.glyphicon.glyphicon-pencil')
-        
+
     @property
     def delete_button(self):
         '''Finds package delete button'''
@@ -85,12 +95,6 @@ class SourcePage:
         return self.driver.find_element(by.By.LINK_TEXT, 'Sources')
 
     @property
-    def new_submit_button(self):
-        '''Finds NEW and Submit button. Both buttons have same class name
-        and live in diffrent views thus giving us opportunity of code reuse'''
-        return self.driver.find_element(by.By.CSS_SELECTOR, '.btn.btn-primary')
-
-    @property
     def git_url(self):
         '''Finds box for entering git url'''
         return self.driver.find_element(by.By.ID, 'id_git_url')
@@ -99,18 +103,15 @@ class SourcePage:
     def branch(self):
         '''Finds box for entering branch name'''
         return self.driver.find_element(by.By.ID, 'id_branch')
-        
-    
-class ProfilePage:
-    def __init__(self, driver):
-        """Constructor."""
-        self.driver = driver
-        
+
+
+class ProfilePage(BasePage):
+
     @property
     def profile_button(self):
         '''Finds package profile button'''
         return self.driver.find_element(by.By.LINK_TEXT, 'Profile')
-    
+
     def verify_profile_page(self, username):
         try:
             self.driver.find_element(by.By.XPATH, "//dl[@class='dl-horizontal']/dd[contains(text(), %s)]" % username)
@@ -118,3 +119,19 @@ class ProfilePage:
             return False
         else:
             return True
+            
+class LogoutPage(BasePage):
+
+    @property
+    def logout_button(self):
+        '''Finds package source button'''
+        return self.driver.find_element(by.By.LINK_TEXT, 'Log out')
+        
+    def verify_login_page(self):
+        try:
+            self.driver.find_element(by.By.XPATH, "//*[@id='login_button']")
+        except:
+            return False
+        else:
+            return True
+

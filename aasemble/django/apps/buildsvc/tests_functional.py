@@ -12,7 +12,7 @@ from aasemble.django.apps.buildsvc.page.basewebobject import WebObject
 
 import selenium.common.exceptions as Exceptions
 
-from aasemble.django.apps.buildsvc.page.pages import SourcePage, ProfilePage
+from aasemble.django.apps.buildsvc.page.pages import SourcePage, ProfilePage, LogoutPage
 
 from selenium.webdriver.common import by
 from selenium.webdriver.firefox.webdriver import WebDriver
@@ -153,17 +153,17 @@ class RepositoryFunctionalTests(WebObject):
         # self.assertEqual(pageHeader.text, "Dashboard", "Dashboard didn't showed up")
 
     
-    # def test_logout_button(self):
-        # '''This test perform a logout from given seesion
+    def test_logout_button(self):
+        '''This test perform a logout from given seesion
         # 1. Create a session cookie for given user. We are using a existing
                # user 'brandon' which is already added as fixture.
         # 2. Press logout.
         # 3. Verify that we came to login page.'''
-        # self.create_login_session('brandon')
-        # # test whether sources page opens after user logs in
-        # self.driver.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
-        # self.driver.set_window_size(1024, 768)
-        # self.logout_button.click()
-        # self.assertEqual(self.verify_login_page(), True, "Logout didn't work")
+        self.create_login_session('brandon')
+        logoutPage = LogoutPage(self.driver)
+        # test whether sources page opens after user logs in
+        logoutPage.driver.get(self.live_server_url)
+        logoutPage.logout_button.click()
+        self.assertEqual(logoutPage.verify_login_page(), True, "Logout didn't work")
 
     
