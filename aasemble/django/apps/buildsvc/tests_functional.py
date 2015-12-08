@@ -80,7 +80,7 @@ class RepositoryFunctionalTests(WebObject):
         # test whether sources page opens after user logs in
         profilePage.driver.get(self.live_server_url)
         profilePage.profile_button.click()
-        self.assertEqual(self.verify_profile_page('brandon'), True, "Profile Name not verified")
+        self.assertEqual(profilePage.verify_profile_page('brandon'), True, "Profile Name not verified")
 
     # def test_new_mirrors(self):
         # ''' This tests validates if non public mirror is created'''
