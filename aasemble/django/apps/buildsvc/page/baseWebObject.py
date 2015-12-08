@@ -15,6 +15,7 @@ class PageObject(StaticLiveServerTestCase):
     def setUpClass(self):
         super(PageObject, self).setUpClass()
         self.driver = WebDriver()
+        self.driver.set_window_size(1024, 768)
         self.driver.maximize_window()
 
     @classmethod
