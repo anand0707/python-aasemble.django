@@ -13,7 +13,7 @@
 from selenium.webdriver.common import by
 from selenium.webdriver.common import keys
 import sys
-import baseWebObject
+import basewebobject
 import time
 from selenium.webdriver.common import by
 from selenium.webdriver.firefox.webdriver import WebDriver
