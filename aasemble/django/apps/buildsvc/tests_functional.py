@@ -69,7 +69,7 @@ class RepositoryFunctionalTests(WebObject):
         sourcePage.delete_package_source()
         self.assertEqual(sourcePage.verify_package_source(git_url=git_url), False, 'Package not deleted')
 
-    # def test_profile_button(self):
+    def test_profile_button(self):
         '''This test verifies the "Profile" button.
             1. Create a session cookie for given user. We are using a existing
                # user 'brandon' which is already added as fixture.
