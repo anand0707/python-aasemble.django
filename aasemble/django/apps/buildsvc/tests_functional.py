@@ -106,37 +106,41 @@ class RepositoryFunctionalTests(WebObject):
         # self.mirror_button.click()
         # self.assertFalse(self._is_element_visible((by.By.LINK_TEXT, '%s%s' % (self.live_server_url, '/apt/brandon/brandon'))))
 
-    # @override_settings(CELERY_ALWAYS_EAGER=True)
-    # # This tests needs celery so overriding the settings
-    # def test_build_packages(self):
-        # '''This test perform a package addtion and check whether a build
-        # started for the same.
-        # 1. Create a session cookie for given user. We are using a existing
+    @override_settings(CELERY_ALWAYS_EAGER=True)
+    # This tests needs celery so overriding the settings
+    def test_build_packages(self):
+        '''This test perform a package addtion and check whether a build
+         started for the same.
+         1. Create a session cookie for given user. We are using a existing
                # user 'brandon' which is already added as fixture.
-        # 2. Try to create a package.
-        # 3. Poll the task for package creation. Polling should start the build
-        # 4. Verify that Building started and it is visible via GUI'''
-        # self.create_login_session('brandon')
-        # # test whether sources page opens after user logs in
-        # self.driver.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
-        # self.driver.set_window_size(1024, 768)
-        # self.sources_button.click()
-        # git_url = "https://github.com/aaSemble/python-aasemble.django.git"
-        # self.create_new_package_source(git_url=git_url, branch='master', series='brandon/aasemble')
-        # from .models import PackageSource
-        # # Only one package is added with this url
-        # P = PackageSource.objects.filter(git_url=git_url)[0]
-        # try:
-            # poll_one(P.id)
-        # except:
-            # # Marking Pass even if we got some exception during package build.
-            # # Our verification is limited to UI inteface. Form UI, It should
-            # # be visible (even if it has just started)
-            # pass
+         2. Try to create a package.
+         3. Poll the task for package creation. Polling should start the build
+         4. Verify that Building started and it is visible via GUI'''
+        sourcePage = SourcePage(self.driver)
+        self.create_login_session('brandon')
+        # test whether sources page opens after user logs in
+        sourcePage.driver.get(self.live_server_url)
+        sourcePage.sources_button.click()
+        git_url = "https://github.com/aaSemble/python-aasemble.django.git"
+        sourcePage.create_new_package_source(git_url=git_url, branch='master', series='brandon/aasemble')
+        self.assertEqual(sourcePage.verify_package_source(git_url=git_url), True, 'Package not created')
+        sourcePage.delete_package_source()
+        self.assertEqual(sourcePage.verify_package_source(git_url=git_url), False, 'Package not deleted')
+        from .models import PackageSource
+        # Only one package is added with this url
+        P = PackageSource.objects.filter(git_url=git_url)[0]
+        try:
+            poll_one(P.id)
+        except:
+            # Marking Pass even if we got some exception during package build.
+            # Our verification is limited to UI inteface. Form UI, It should
+            # be visible (even if it has just started)
+            pass
         # finally:
-            # self.driver.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
-            # self.build_button.click()
-            # self.assertEqual(self.verify_build_displayed(packageName='python-aasemble.django.git'), True, 'Build not started')
+            buildPage = BuildPage(self.driver)
+            buildPage.driver.get(self.live_server_url)
+            buildPage.build_button.click()
+            self.assertEqual(buildPage.verify_build_displayed(packageName='python-aasemble.django.git'), True, 'Build not started')
 
     def test_overview_button(self):
         '''This test performs the test for overview button

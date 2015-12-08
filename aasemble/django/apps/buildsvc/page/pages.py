@@ -146,4 +146,20 @@ class OverviewPage(BasePage):
         '''Finds overview button'''
         return self.driver.find_element(by.By.XPATH, "//a[@href='/' and contains(text(), 'Overview')]")
         
+class BuildPage(BasePage):
+    
+    @property
+    def build_button(self):
+        '''Finds package source button'''
+        return self.driver.find_element(by.By.LINK_TEXT, 'Builds')
+
+    def verify_build_displayed(self, packageName):
+        '''Verify whether the Build has started by package name'''
+        try:
+            self.driver.find_element(by.By.CSS_SELECTOR, "a[href*='%s']" % packageName)
+        except:
+            return False
+        else:
+            return True
+        
        
