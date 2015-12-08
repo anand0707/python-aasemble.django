@@ -14,17 +14,20 @@ class PageObject(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(self):
         super(PageObject, self).setUpClass()
-        self.selenium = WebDriver()
-        self.selenium.maximize_window()
+        self.driver = WebDriver()
+        self.driver.maximize_window()
 
     @classmethod
     def tearDownClass(self):
-        cls.selenium.quit()
-        super(PageObject, cls).tearDownClass()
+        self.driver.quit()
+        super(PageObject, self).tearDownClass()
         
         
     @classmethod
     def create_login_session(self, username):
         session_cookie = create_session_for_given_user(username)
-        self.selenium.get(self.live_server_url)
-        self.selenium.add_cookie(session_cookie)
+        print "\n###############\n"
+        print self.live_server_url
+        print "\n###############\n"
+        self.driver.get(self.live_server_url)
+        self.driver.add_cookie(session_cookie)
