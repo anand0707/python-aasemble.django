@@ -1,30 +1,25 @@
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
+
 
 from selenium.webdriver.common import by
 from selenium.webdriver.common import keys
-import sys
-import basewebobject
-import time
 from selenium.webdriver.common import by
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.ui import Select
 
+import sys
+import basewebobject
+import time
+
 class BasePage:
+    '''This is the base class to provide all the common
+    functionality of overcast aasemble page. for example
+    We might need page-header for any view of this site.
+    so it can be written in base class'''
 
     def __init__(self, driver):
         """Constructor."""
         self.driver = driver
-        
+
     def get_page_header_value(self):
         '''Find page header's value'''
         return self.driver.find_element(by.By.CLASS_NAME, "page-header")
@@ -36,6 +31,8 @@ class BasePage:
         return self.driver.find_element(by.By.CSS_SELECTOR, '.btn.btn-primary')
 
 class SourcePage(BasePage):
+    '''This class is to perform all operations on sourcePackage
+    view of site'''
 
     def create_new_package_source(self, git_url, branch, series):
         '''This is the helper method to create
@@ -109,6 +106,8 @@ class SourcePage(BasePage):
 
 
 class ProfilePage(BasePage):
+    '''This class is to perform all operations on Profile
+    view of site'''
 
     @property
     def profile_button(self):
@@ -122,14 +121,16 @@ class ProfilePage(BasePage):
             return False
         else:
             return True
-            
+
 class LogoutPage(BasePage):
+     '''This class is to perform all operations on Logout
+    view of site'''
 
     @property
     def logout_button(self):
         '''Finds package source button'''
         return self.driver.find_element(by.By.LINK_TEXT, 'Log out')
-        
+
     def verify_login_page(self):
         try:
             self.driver.find_element(by.By.XPATH, "//*[@id='login_button']")
@@ -138,16 +139,20 @@ class LogoutPage(BasePage):
         else:
             return True
 
-            
+
 class OverviewPage(BasePage):
+    '''This class is to perform all operations on Profile
+    view of site'''
 
     @property
     def overview_button(self):
         '''Finds overview button'''
         return self.driver.find_element(by.By.XPATH, "//a[@href='/' and contains(text(), 'Overview')]")
-        
+
 class BuildPage(BasePage):
-    
+    '''This class is to perform all operations on build
+    view of site'''
+
     @property
     def build_button(self):
         '''Finds package source button'''
@@ -161,5 +166,3 @@ class BuildPage(BasePage):
             return False
         else:
             return True
-        
-       

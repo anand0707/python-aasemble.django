@@ -1,7 +1,3 @@
-#from openstack_dashboard.test.integration_tests import basewebobject
-
-
-#class PageObject(basewebobject.BaseWebObject):
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from selenium.webdriver.firefox.webdriver import WebDriver
