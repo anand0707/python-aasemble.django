@@ -12,19 +12,19 @@ class PageObject(StaticLiveServerTestCase):
     """Base class for page objects."""
 
     @classmethod
-    def setUpClass(cls):
-        super(PageObject, cls).setUpClass()
-        cls.selenium = WebDriver()
-        cls.selenium.maximize_window()
+    def setUpClass(self):
+        super(PageObject, self).setUpClass()
+        self.selenium = WebDriver()
+        self.selenium.maximize_window()
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(self):
         cls.selenium.quit()
         super(PageObject, cls).tearDownClass()
         
         
     @classmethod
-    def create_login_session(cls, username):
+    def create_login_session(self, username):
         session_cookie = create_session_for_given_user(username)
         self.selenium.get(self.live_server_url)
         self.selenium.add_cookie(session_cookie)
