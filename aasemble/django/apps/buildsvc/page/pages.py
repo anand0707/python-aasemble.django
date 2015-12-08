@@ -47,7 +47,7 @@ class SourcePage:
         '''This is the helper method to select a given
         series from drop-down box
         INPUT: series (string type)'''
-        mySelect = Select(self.selenium.find_element_by_id("id_series"))
+        mySelect = Select(self.driver.find_element_by_id("id_series"))
         mySelect.select_by_visible_text(series)
 
 
@@ -59,7 +59,7 @@ class SourcePage:
         self.sources_button.click()
         # It will report an exception if element not found
         try:
-            self.selenium.find_element(by.By.LINK_TEXT, git_url)
+            self.driver.find_element(by.By.LINK_TEXT, git_url)
         except:
             return False
         else:
@@ -68,21 +68,21 @@ class SourcePage:
     @property
     def sources_button(self):
         '''Finds package source button'''
-        return self.selenium.find_element(by.By.LINK_TEXT, 'Sources')
+        return self.driver.find_element(by.By.LINK_TEXT, 'Sources')
 
     @property
     def new_submit_button(self):
         '''Finds NEW and Submit button. Both buttons have same class name
         and live in diffrent views thus giving us opportunity of code reuse'''
-        return self.selenium.find_element(by.By.CSS_SELECTOR, '.btn.btn-primary')
+        return self.driver.find_element(by.By.CSS_SELECTOR, '.btn.btn-primary')
 
     @property
     def git_url(self):
         '''Finds box for entering git url'''
-        return self.selenium.find_element(by.By.ID, 'id_git_url')
+        return self.driver.find_element(by.By.ID, 'id_git_url')
 
     @property
     def branch(self):
         '''Finds box for entering branch name'''
-        return self.selenium.find_element(by.By.ID, 'id_branch')
+        return self.driver.find_element(by.By.ID, 'id_branch')
 
