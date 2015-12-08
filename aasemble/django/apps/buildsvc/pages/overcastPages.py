@@ -1,5 +1,3 @@
-
-
 from selenium.webdriver.common import by
 from selenium.webdriver.common import keys
 from selenium.webdriver.common import by
@@ -9,6 +7,7 @@ from selenium.webdriver.support.ui import Select
 import sys
 import basewebobject
 import time
+
 
 class BasePage:
     '''This is the base class to provide all the common
@@ -29,6 +28,7 @@ class BasePage:
         '''Finds NEW and Submit button. Both buttons have same class name
         and live in diffrent views thus giving us opportunity of code reuse'''
         return self.driver.find_element(by.By.CSS_SELECTOR, '.btn.btn-primary')
+
 
 class SourcePage(BasePage):
     '''This class is to perform all operations on sourcePackage
@@ -122,6 +122,7 @@ class ProfilePage(BasePage):
         else:
             return True
 
+
 class LogoutPage(BasePage):
      '''This class is to perform all operations on Logout
     view of site'''
@@ -148,6 +149,7 @@ class OverviewPage(BasePage):
     def overview_button(self):
         '''Finds overview button'''
         return self.driver.find_element(by.By.XPATH, "//a[@href='/' and contains(text(), 'Overview')]")
+
 
 class BuildPage(BasePage):
     '''This class is to perform all operations on build

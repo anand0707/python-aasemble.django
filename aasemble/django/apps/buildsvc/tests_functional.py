@@ -1,23 +1,17 @@
 import os
 import re
 
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.test.utils import override_settings, skipIf
+from aasemble.django.apps.buildsvc.pages.basewebobject import WebObject
 
 from aasemble.django.apps.buildsvc.tasks import poll_one
 
 from aasemble.django.tests import create_session_cookie
 
-from aasemble.django.apps.buildsvc.page.basewebobject import WebObject
+from django.test.utils import override_settings, skipIf
 
-import selenium.common.exceptions as Exceptions
+# import selenium.common.exceptions as Exceptions
 
-from aasemble.django.apps.buildsvc.pages.overcastPages import SourcePage, ProfilePage, LogoutPage, OverviewPage
-
-from selenium.webdriver.common import by
-from selenium.webdriver.firefox.webdriver import WebDriver
-from selenium.webdriver.support.ui import Select
-
+from aasemble.django.apps.buildsvc.pages.overcastPages import SourcePage, ProfilePage, LogoutPage, OverviewPage, BuildPage
 
 @skipIf(os.environ.get('SKIP_SELENIUM_TESTS', '') == '1',
         'Skipping Selenium based test, because SKIP_SELENIUM_TESTS=1')
