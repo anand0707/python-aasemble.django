@@ -64,6 +64,27 @@ class SourcePage:
             return False
         else:
             return True
+            
+    def delete_package_source(self):
+        '''This is the helper method to delete a package.
+        This consists of followwinng steps:
+        1. Click on source button.
+        2. Click on edit button for package.
+        3. click on delete button.'''
+        self.sources_button.click()
+        self.package_edit_button.click()
+        self.delete_button.click()
+        
+    @property
+    def package_edit_button(self):
+        '''Finds package edit button.
+        NOTE: Only one package is expected at once'''
+        return self.selenium.find_element(by.By.CSS_SELECTOR, '.glyphicon.glyphicon-pencil')
+        
+    @property
+    def delete_button(self):
+        '''Finds package delete button'''
+        return self.selenium.find_element(by.By.CSS_SELECTOR, '.btn.btn-danger')
 
     @property
     def sources_button(self):
