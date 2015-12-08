@@ -7,7 +7,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 class PageObject(StaticLiveServerTestCase):
     """Base class for page objects."""
 
-     @classmethod
+    @classmethod
     def setUpClass(cls):
         super(RepositoryFunctionalTests, cls).setUpClass()
         cls.selenium = WebDriver()
