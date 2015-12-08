@@ -10,6 +10,12 @@ from aasemble.django.tests import create_session_cookie, create_session_for_give
 
 from aasemble.django.apps.buildsvc.page.pageobject import PageObject
 
+import selenium.common.exceptions as Exceptions
+
+from selenium.webdriver.common import by
+from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.support.ui import Select
+
 
 @skipIf(os.environ.get('SKIP_SELENIUM_TESTS', '') == '1',
         'Skipping Selenium based test, because SKIP_SELENIUM_TESTS=1')
