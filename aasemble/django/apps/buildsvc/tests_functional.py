@@ -124,8 +124,6 @@ class RepositoryFunctionalTests(WebObject):
         git_url = "https://github.com/aaSemble/python-aasemble.django.git"
         sourcePage.create_new_package_source(git_url=git_url, branch='master', series='brandon/aasemble')
         self.assertEqual(sourcePage.verify_package_source(git_url=git_url), True, 'Package not created')
-        sourcePage.delete_package_source()
-        self.assertEqual(sourcePage.verify_package_source(git_url=git_url), False, 'Package not deleted')
         from .models import PackageSource
         # Only one package is added with this url
         P = PackageSource.objects.filter(git_url=git_url)[0]
