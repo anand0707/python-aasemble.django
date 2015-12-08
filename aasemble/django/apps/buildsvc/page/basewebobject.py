@@ -13,7 +13,7 @@ class WebObject(StaticLiveServerTestCase):
 
     @classmethod
     def setUpClass(self):
-        super(PageObject, self).setUpClass()
+        super(WebObject, self).setUpClass()
         self.driver = WebDriver()
         self.driver.set_window_size(1024, 768)
         self.driver.maximize_window()
@@ -21,7 +21,7 @@ class WebObject(StaticLiveServerTestCase):
     @classmethod
     def tearDownClass(self):
         self.driver.quit()
-        super(PageObject, self).tearDownClass()
+        super(WebObject, self).tearDownClass()
 
     def create_login_session(self, username):
         session_cookie = create_session_for_given_user(username)
