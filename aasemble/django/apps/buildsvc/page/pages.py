@@ -20,12 +20,6 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.ui import Select
 
 class SourcePage:
-    # _source_button_locator = (by.By.LINK_TEXT, 'Sources')
-    # _new_submit_button_locator = (by.By.CSS_SELECTOR, '.btn.btn-primary')
-    # _git_url_field_locator  = (by.By.ID, 'id_git_url')
-    # _branch_field_locator = (by.By.ID, 'id_branch')
-    # _series_drop_down_locator = (by.By.ID, 'id_series')
-    
     def __init__(self, driver):
         """Constructor."""
         self.driver = driver
@@ -49,7 +43,6 @@ class SourcePage:
         INPUT: series (string type)'''
         mySelect = Select(self.driver.find_element_by_id("id_series"))
         mySelect.select_by_visible_text(series)
-
 
     def verify_package_source(self, git_url):
         '''This is the helper method to verify whether
@@ -106,4 +99,22 @@ class SourcePage:
     def branch(self):
         '''Finds box for entering branch name'''
         return self.driver.find_element(by.By.ID, 'id_branch')
-
+        
+    
+class ProfilePage:
+    def __init__(self, driver):
+        """Constructor."""
+        self.driver = driver
+        
+    @property
+    def profile_button(self):
+        '''Finds package profile button'''
+        return self.driver.find_element(by.By.LINK_TEXT, 'Profile')
+    
+    def verify_profile_page(self, username):
+        try:
+            self.driver.find_element(by.By.XPATH, "//dl[@class='dl-horizontal']/dd[contains(text(), %s)]" % username)
+        except:
+            return False
+        else:
+            return True

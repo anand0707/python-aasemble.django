@@ -8,7 +8,7 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 
 from aasemble.django.tests import create_session_for_given_user
 
-class PageObject(StaticLiveServerTestCase):
+class WebObject(StaticLiveServerTestCase):
     """Base class for page objects."""
 
     @classmethod

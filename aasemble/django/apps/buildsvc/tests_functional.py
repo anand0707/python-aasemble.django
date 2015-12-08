@@ -8,7 +8,7 @@ from aasemble.django.apps.buildsvc.tasks import poll_one
 
 from aasemble.django.tests import create_session_cookie
 
-from aasemble.django.apps.buildsvc.page.baseWebObject import PageObject
+from aasemble.django.apps.buildsvc.page.basewebobject import WebObject
 
 import selenium.common.exceptions as Exceptions
 
@@ -21,7 +21,7 @@ from selenium.webdriver.support.ui import Select
 
 @skipIf(os.environ.get('SKIP_SELENIUM_TESTS', '') == '1',
         'Skipping Selenium based test, because SKIP_SELENIUM_TESTS=1')
-class RepositoryFunctionalTests(PageObject):
+class RepositoryFunctionalTests(WebObject):
     fixtures = ['complete.json']
 
     # def test_user_signs_up_for_signup(self):
@@ -70,17 +70,17 @@ class RepositoryFunctionalTests(PageObject):
         self.assertEqual(sourcePage.verify_package_source(git_url=git_url), False, 'Package not deleted')
 
     # def test_profile_button(self):
-        # '''This test verifies the "Profile" button.
-        # 1. Create a session cookie for given user. We are using a existing
+        '''This test verifies the "Profile" button.
+            1. Create a session cookie for given user. We are using a existing
                # user 'brandon' which is already added as fixture.
-        # 2. Press 'Profile' button.
-        # 3. Verify page by username'''
-        # self.create_login_session('brandon')
-        # # test whether sources page opens after user logs in
-        # self.driver.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
-        # self.driver.set_window_size(1024, 768)
-        # self.profile_button.click()
-        # self.assertEqual(self.verify_profile_page('brandon'), True, "Profile Name not verified")
+            2. Press 'Profile' button.
+            3. Verify page by username'''
+        self.create_login_session('brandon')
+        profilePage = ProfilePage(self.driver)
+        # test whether sources page opens after user logs in
+        profilePage.driver.get(self.live_server_url)
+        profilePage.profile_button.click()
+        self.assertEqual(self.verify_profile_page('brandon'), True, "Profile Name not verified")
 
     # def test_new_mirrors(self):
         # ''' This tests validates if non public mirror is created'''
