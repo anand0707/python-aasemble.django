@@ -59,7 +59,7 @@ class RepositoryFunctionalTests(PageObject):
            4. Try to delete the package
            5. Verify if the package has been deleted'''
         sourcePage = SourcePage(self.driver)
-        sourcePage.create_login_session('brandon')
+        self.create_login_session('brandon')
         # test whether sources page opens after user logs in
         sourcePage.driver.get(self.live_server_url)
         sourcePage.sources_button.click()
