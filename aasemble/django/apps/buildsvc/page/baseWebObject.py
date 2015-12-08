@@ -21,9 +21,7 @@ class PageObject(StaticLiveServerTestCase):
     def tearDownClass(self):
         self.driver.quit()
         super(PageObject, self).tearDownClass()
-        
-        
-    @classmethod
+
     def create_login_session(self, username):
         session_cookie = create_session_for_given_user(username)
         print "\n###############\n"
