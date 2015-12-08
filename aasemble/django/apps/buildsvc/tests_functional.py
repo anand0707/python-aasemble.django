@@ -65,9 +65,9 @@ class RepositoryFunctionalTests(PageObject):
         sourcePage.sources_button.click()
         git_url = "https://github.com/aaSemble/python-aasemble.django.git"
         sourcePage.create_new_package_source(git_url=git_url, branch='master', series='brandon/aasemble')
-        sourcePage.assertEqual(self.verify_package_source(git_url=git_url), True, 'Package not created')
+        self.assertEqual(sourcePage.verify_package_source(git_url=git_url), True, 'Package not created')
         sourcePage.delete_package_source()
-        sourcePage.assertEqual(self.verify_package_source(git_url=git_url), False, 'Package not deleted')
+        self.assertEqual(sourcePage.verify_package_source(git_url=git_url), False, 'Package not deleted')
 
     # def test_profile_button(self):
         # '''This test verifies the "Profile" button.
