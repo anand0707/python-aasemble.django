@@ -5,13 +5,14 @@ from aasemble.django.apps.buildsvc.pages.basewebobject import WebObject
 
 from aasemble.django.apps.buildsvc.tasks import poll_one
 
-from aasemble.django.tests import create_session_cookie
-
 from django.test.utils import override_settings, skipIf
+
+from aasemble.django.tests import create_session_cookie
 
 # import selenium.common.exceptions as Exceptions
 
-from aasemble.django.apps.buildsvc.pages.overcastPages import SourcePage, ProfilePage, LogoutPage, OverviewPage, BuildPage
+from aasemble.django.apps.buildsvc.pages.overcastPages import BuildPage, LogoutPage, OverviewPage, ProfilePage, SourcePage
+
 
 @skipIf(os.environ.get('SKIP_SELENIUM_TESTS', '') == '1',
         'Skipping Selenium based test, because SKIP_SELENIUM_TESTS=1')

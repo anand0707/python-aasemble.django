@@ -1,12 +1,5 @@
-from selenium.webdriver.common import by
-from selenium.webdriver.common import keys
-from selenium.webdriver.common import by
-from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.common import by, keys
 from selenium.webdriver.support.ui import Select
-
-import sys
-import basewebobject
-import time
 
 
 class BasePage:
@@ -126,6 +119,7 @@ class ProfilePage(BasePage):
 class LogoutPage(BasePage):
     '''This class is to perform all operations on Profile
     view of site'''
+
     @property
     def logout_button(self):
         '''Finds package source button'''
