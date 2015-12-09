@@ -4,10 +4,9 @@ import re
 from django.test.utils import override_settings, skipIf
 
 from aasemble.django.apps.buildsvc.pages.basewebobject import WebObject
+from aasemble.django.apps.buildsvc.pages.overcastPages import BuildPage, LogoutPage, OverviewPage, ProfilePage, SourcePage
 
 from aasemble.django.apps.buildsvc.tasks import poll_one
-
-from aasemble.django.apps.buildsvc.pages.overcastPages import BuildPage, LogoutPage, OverviewPage, ProfilePage, SourcePage
 
 from aasemble.django.tests import create_session_cookie
 
