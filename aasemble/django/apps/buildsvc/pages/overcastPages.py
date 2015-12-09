@@ -152,8 +152,6 @@ class OverviewPage(BasePage):
 
 
 class BuildPage(BasePage):
-    '''This class is to perform all operations on build
-    view of site'''
 
     @property
     def build_button(self):
