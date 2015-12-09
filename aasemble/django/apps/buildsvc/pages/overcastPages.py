@@ -124,9 +124,8 @@ class ProfilePage(BasePage):
 
 
 class LogoutPage(BasePage):
-     '''This class is to perform all operations on Logout
+    '''This class is to perform all operations on Profile
     view of site'''
-
     @property
     def logout_button(self):
         '''Finds package source button'''
