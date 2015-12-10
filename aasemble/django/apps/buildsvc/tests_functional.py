@@ -236,8 +236,7 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
          ' Steps:
          1. Create new mirror and mirrorset for user 'brandon'.
          2. "View snapshot" for its first (only in this case) mirrorset.
-         3. Save the number of lines in tables ( reducing this number by
-            will give us number of snapshot.
+         3. Save the number of lines in tables.
          4. Create a snaphot
          5. Repeat step 3.
          6. Difference should be exaclty one.'''
@@ -245,7 +244,8 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
         self.test_mirror_set()
         self.create_login_session('brandon')
         self.selenium.set_window_size(1024, 768)
-        self.selenium.get('%s%s' % (self.live_server_url, '/mirrorsvc/mirrorsets/'))
+        self.selenium.get(self.live_server_url)
+        self.mirror_set_button.click()
         viewButton = self.selenium.find_element(by.By.XPATH, "//a[contains(text(), 'View snapshots')]")
         viewButton.click()
         existingSnaps = self.selenium.find_elements(by.By.XPATH, "//table[@class='table table-striped']//tr")
@@ -254,6 +254,11 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
         existingSnaps = self.selenium.find_elements(by.By.XPATH, "//table[@class='table table-striped']//tr")
         noOfExistingSnapsAfter = len(existingSnaps)
         self.assertEqual(noOfExistingSnapsAfter - noOfExistingSnapsPrevious, 1, "SnapShot didn't created")
+        
+    @property
+    def mir_button(self):
+        '''Finds package source button'''
+        return self.selenium.find_element(by.By.LINK_TEXT, 'Builds')
 
     def create_new_package_source(self, git_url, branch, series):
         '''This is the helper method to create
