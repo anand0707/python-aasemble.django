@@ -254,11 +254,6 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
         existingSnaps = self.selenium.find_elements(by.By.XPATH, "//table[@class='table table-striped']//tr")
         noOfExistingSnapsAfter = len(existingSnaps)
         self.assertEqual(noOfExistingSnapsAfter - noOfExistingSnapsPrevious, 1, "SnapShot didn't created")
-        
-    @property
-    def mir_button(self):
-        '''Finds package source button'''
-        return self.selenium.find_element(by.By.LINK_TEXT, 'Builds')
 
     def create_new_package_source(self, git_url, branch, series):
         '''This is the helper method to create
