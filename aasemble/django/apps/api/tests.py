@@ -2,6 +2,9 @@ import os.path
 
 from collections import OrderedDict
 
+from django.conf import settings
+from django.test import override_settings
+
 import mock
 
 from rest_framework.authtoken.models import Token
@@ -125,6 +128,13 @@ class APIv1Tests(APITestCase):
         self.assertEquals(response.status_code, 404)
         self.assertEquals(response.data, {'detail': 'Not found.'})
 
+    def test_delete_repository_authoritative_group_member(self):
+        authenticate(self.client, 'dennis')
+        response = self.client.get(self.repository_list_url)
+        authenticate(self.client, 'brandon')
+        response = self.client.delete(response.data['results'][0]['self'])
+        self.assertEquals(response.status_code, 204)
+
     def test_delete_repository_same_group_different_member(self):
         repo = self.test_create_repository(user='brandon')
         authenticate(self.client, 'charles')
@@ -150,10 +160,27 @@ class APIv1Tests(APITestCase):
         response = self.client.get(response.data['self'])
         self.assertEquals(response.data, expected_result, 'Changes were not persisted')
 
+    def test_patch_repository_authoritative_group_member(self):
+        authenticate(self.client, 'dennis')
+        response = self.client.get(self.repository_list_url)
+        authenticate(self.client, 'brandon')
+        data = {'name': 'testrepo2'}
+        response = self.client.patch(response.data['results'][0]['self'], data, format='json')
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.data['name'], 'testrepo2')
+
     def test_patch_repository_read_only_field(self):
         repo = self.test_create_repository()
         data = {'user': 'testuser2'}
         response = self.client.patch(repo['self'], data, format='json')
+        self.assertNotEquals(response.data['user'], 'testuser2', '"user" read-only field changed')
+
+    def test_patch_repository_authoritative_group_member_read_only_field(self):
+        authenticate(self.client, 'dennis')
+        response = self.client.get(self.repository_list_url)
+        authenticate(self.client, 'brandon')
+        data = {'user': 'testuser2'}
+        response = self.client.patch(response.data['results'][0]['self'], data, format='json')
         self.assertNotEquals(response.data['user'], 'testuser2', '"user" read-only field changed')
 
     def test_delete_deleted_repository(self):
@@ -198,6 +225,7 @@ class APIv1Tests(APITestCase):
         authenticate(self.client, 'george')
         response = self.client.patch(repo['self'], data, format='json')
         self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.data['name'], 'testrepo2')
 
     def test_patch_repository_deactivated_super_user(self):
         repo = self.test_create_repository()
@@ -239,12 +267,19 @@ class APIv1Tests(APITestCase):
 
     def test_fetch_builds(self):
         authenticate(self.client, 'eric')
-        # 6 queries: Create transaction, Authenticate, 1 logging entry, count results, fetch results,
-        # rollback transaction
-        with self.assertNumQueries(6):
+        # 7 queries: Create transaction, Authenticate, 1 logging entry, count results, fetch results,
+        # rollback transaction, log response
+        with self.assertNumQueries(7):
             response = self.client.get(self.build_list_url)
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.data['count'], 10)
+
+    @override_settings(INSTALLED_APPS=filter(lambda s: s != 'rest_framework_tracking', settings.INSTALLED_APPS))
+    def test_fetch_builds_without_logging(self):
+        authenticate(self.client, 'eric')
+        # 3 queries: Authenticate, count results, fetch results
+        with self.assertNumQueries(3):
+            self.client.get(self.build_list_url)
 
     def test_source_is_linked_or_nested(self):
         authenticate(self.client, 'eric')
@@ -266,9 +301,9 @@ class APIv1Tests(APITestCase):
 
     def test_fetch_sources(self):
         authenticate(self.client, 'eric')
-        # 6 queries: Create transaction, Authenticate, 1 logging entry, count results, fetch results,
-        # rollback transaction
-        with self.assertNumQueries(6):
+        # 7 queries: Create transaction, Authenticate, 1 logging entry, count results, fetch results,
+        # rollback transaction, log response
+        with self.assertNumQueries(7):
             response = self.client.get(self.source_list_url)
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.data['count'], 12)
@@ -278,9 +313,9 @@ class APIv1Tests(APITestCase):
         response = self.client.get(self.repository_list_url)
         for res in response.data['results']:
             if res['name'] == 'eric2':
-                # 6 queries: Create transaction, Authenticate, 1 logging entry, count results, fetch results,
-                # rollback transaction
-                with self.assertNumQueries(6):
+                # 7 queries: Create transaction, Authenticate, 1 logging entry, count results, fetch results,
+                # rollback transaction, log response
+                with self.assertNumQueries(7):
                     response = self.client.get(res['sources'])
                 self.assertEquals(response.status_code, 200)
                 self.assertEquals(response.data['count'], 2)
@@ -375,6 +410,16 @@ class APIv1Tests(APITestCase):
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.data['repository'], repo.data['results'][1]['self'])
 
+    def test_patch_soure_authoritative_group_member(self):
+        authenticate(self.client, 'dennis')
+        source = self.client.get(self.source_list_url)
+        authenticate(self.client, 'brandon')
+        repo = self.client.get(self.repository_list_url)
+        data = {'repository': repo.data['results'][0]['self']}
+        response = self.client.patch(source.data['results'][0]['self'], data, format='json')
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.data['repository'], repo.data['results'][0]['self'])
+
     def test_patch_source_invalid_data(self):
         source = self.test_create_source()
         data = {'repository': 'invalid repo URL'}
@@ -452,6 +497,13 @@ class APIv1Tests(APITestCase):
         source = self.test_create_source()
         authenticate(self.client, 'george')
         response = self.client.delete(source['self'])
+        self.assertEquals(response.status_code, 204)
+
+    def test_delete_source_authoritative_group_member(self):
+        authenticate(self.client, 'dennis')
+        source = self.client.get(self.source_list_url)
+        authenticate(self.client, 'brandon')
+        response = self.client.delete(source.data['results'][0]['self'])
         self.assertEquals(response.status_code, 204)
 
     def test_delete_source_invalid_token(self):
