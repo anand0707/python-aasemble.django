@@ -67,7 +67,7 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
            5. Verify if the package has been deleted'''
         self.create_login_session('brandon')
         # test whether sources page opens after user logs in
-        self.selenium.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
+        self.selenium.get(self.live_server_url)
         self.selenium.set_window_size(1024, 768)
         self.sources_button.click()
         git_url = "https://github.com/aaSemble/python-aasemble.django.git"
@@ -84,7 +84,7 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
         3. Verify page by username'''
         self.create_login_session('brandon')
         # test whether sources page opens after user logs in
-        self.selenium.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
+        self.selenium.get(self.live_server_url)
         self.selenium.set_window_size(1024, 768)
         self.profile_button.click()
         self.assertEqual(self.verify_profile_page('brandon'), True, "Profile Name not verified")
@@ -142,7 +142,7 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
         4. Verify that Building started and it is visible via GUI'''
         self.create_login_session('brandon')
         # test whether sources page opens after user logs in
-        self.selenium.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
+        self.selenium.get(self.live_server_url)
         self.selenium.set_window_size(1024, 768)
         self.sources_button.click()
         git_url = "https://github.com/aaSemble/python-aasemble.django.git"
@@ -158,7 +158,7 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
             # be visible (even if it has just started)
             pass
         finally:
-            self.selenium.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
+            self.selenium.get(self.live_server_url)
             self.build_button.click()
             self.assertEqual(self.verify_build_displayed(packageName='python-aasemble.django.git'), True, 'Build not started')
 
@@ -170,7 +170,7 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
         3. Verify whether 'Dashboard' came.'''
         self.create_login_session('brandon')
         # test whether sources page opens after user logs in
-        self.selenium.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
+        self.selenium.get(self.live_server_url)
         self.selenium.set_window_size(1024, 768)
         self.overview_button.click()
         pageHeader = self.get_page_header_value()
@@ -193,7 +193,7 @@ class RepositoryFunctionalTests(StaticLiveServerTestCase):
         3. Verify that we came to login page.'''
         self.create_login_session('brandon')
         # test whether sources page opens after user logs in
-        self.selenium.get('%s%s' % (self.live_server_url, '/buildsvc/sources/'))
+        self.selenium.get(self.live_server_url)
         self.selenium.set_window_size(1024, 768)
         self.logout_button.click()
         self.assertEqual(self.verify_login_page(), True, "Logout didn't work")
