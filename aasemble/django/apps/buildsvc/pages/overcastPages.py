@@ -2,7 +2,7 @@ from selenium.webdriver.common import by
 from selenium.webdriver.support.ui import Select
 
 
-class BasePage:
+class BasePage(object):
     '''This is the base class to provide all the common
     functionality of overcast aasemble page. for example
     We might need page-header for any view of this site.
@@ -21,6 +21,13 @@ class BasePage:
         '''Finds NEW and Submit button. Both buttons have same class name
         and live in diffrent views thus giving us opportunity of code reuse'''
         return self.driver.find_element(by.By.CSS_SELECTOR, '.btn.btn-primary')
+        
+    def _is_element_visible(self, locator):
+        try:
+            return self.selenium.find_element(*locator).is_displayed()
+        except (Exceptions.NoSuchElementException,
+                Exceptions.ElementNotVisibleException):
+            return False
 
 
 class SourcePage(BasePage):
@@ -159,3 +166,45 @@ class BuildPage(BasePage):
             return False
         else:
             return True
+
+class Mirrors(BasePage):
+
+    @property
+    def mirror_button(self):
+        '''Finds package source button'''
+        return self.driver.find_element(by.By.LINK_TEXT, 'Mirrors')
+
+    @property
+    def new_mirror_button(self):
+        '''Finds new mirrors button'''
+        return self.driver.find_element(by.By.LINK_TEXT, 'New')
+
+    @property
+    def url_field(self):
+        '''Finds url field'''
+        return self.driver.find_element(by.By.ID, 'id_url')
+        
+    @property
+    def series_field(self):
+        '''Finds series filed'''
+        return self.driver.find_element(by.By.ID, 'id_series')
+        
+    @property
+    def component_field(self):
+        '''Finds component field'''
+        return self.driver.find_element(by.By.ID, 'id_components')
+        
+    @property
+    def summit_button(self):
+        '''Finds submit button'''
+        return self.driver.find_element(by.By.XPATH, './/button[@type="submit" and contains(.,"Submit")]')
+        
+    def verify_mirror_visible_by_url(self, value)
+        locator = (by.By.LINK_TEXT, value)
+        return self._is_element_visible(locator)
+        
+    def verify_mirror_private(self):
+        locator = (by.By.XPATH, ".//table/tbody/tr[1]/td[5][contains(text(), False)]")
+        return self._is_element_visible(locator)
+        
+

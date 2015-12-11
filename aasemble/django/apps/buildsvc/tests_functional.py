@@ -4,7 +4,7 @@ import re
 from django.test.utils import override_settings, skipIf
 
 from aasemble.django.apps.buildsvc.pages.basewebobject import WebObject
-from aasemble.django.apps.buildsvc.pages.overcastPages import BuildPage, LogoutPage, OverviewPage, ProfilePage, SourcePage
+from aasemble.django.apps.buildsvc.pages.overcastPages import BuildPage, LogoutPage, MirrorsPage, OverviewPage, ProfilePage, SourcePage
 
 from aasemble.django.apps.buildsvc.tasks import poll_one
 
@@ -136,3 +136,18 @@ class RepositoryFunctionalTests(WebObject):
         logoutPage.driver.get(self.live_server_url)
         logoutPage.logout_button.click()
         self.assertEqual(logoutPage.verify_login_page(), True, "Logout didn't work")
+
+    def test_new_mirrors(self):
+        ''' This tests validates if non public mirror is created'''
+        self.create_login_session('brandon')
+        mirrorsPage = MirrorsPage(self.driver)
+        mirrorsPage.mirror_button.click()
+        mirrorsPage.new_mirror_button.click()
+        mirrorsPage.url_field.send_keys('%s%s' % (self.live_server_url, '/apt/brandon/brandon'))
+        mirrorsPage.series_field.send_keys('brandon/aasemble')
+        mirrorsPage.component_field.send_keys('aasemble')
+        mirrorsPage.submit_button.click()
+        self.assertTrue(mirrorsPage.verify_mirror_visible_by_url('%s%s' % (self.live_server_url, '/apt/brandon/brandon')))
+        self.assertTrue(mirrorsPage.verify_mirror_private())
+
+
