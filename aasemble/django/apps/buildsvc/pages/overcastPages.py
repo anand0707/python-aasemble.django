@@ -1,3 +1,5 @@
+import selenium.common.exceptions as Exceptions
+
 from selenium.webdriver.common import by
 from selenium.webdriver.support.ui import Select
 
