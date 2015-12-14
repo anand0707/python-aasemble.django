@@ -150,5 +150,35 @@ class RepositoryFunctionalTests(WebObject):
         mirrorsPage.submit_button.click()
         self.assertTrue(mirrorsPage.verify_mirror_visible_by_url('%s%s' % (self.live_server_url, '/apt/brandon/brandon')))
         self.assertTrue(mirrorsPage.verify_mirror_private())
+        
+    def test_mirror_set(self):
+        '''This test verifies the working of mirror set'''
+        self.create_login_session('brandon')
+        mirrorsSet = MirrorSetPage(self.driver)
+        mirrorsSet.get(self.live_server_url)
+        mirrorsSet.mirror_set_button.click()
+        mirrorsSet.new_submit_button.click()
+        mirrorsSet.create_mirror_set(name='mySet')
+        
+    def test_snapshot_operations(self):
+        '''This test verifies the operations snapshot.
+         ' Steps:
+         1. Create new mirror and mirrorset for user 'brandon'.
+         2. "View snapshot" for its first (only in this case) mirrorset.
+         3. Save the number of lines in tables.
+         4. Create a snaphot
+         5. Repeat step 3.
+         6. Difference should be exaclty one.'''
+        self.test_new_mirrors()
+        self.test_mirror_set()
+        self.create_login_session('brandon')
+        mirrorsSet = MirrorSetPage(self.driver)
+        mirrorsSet.get(self.live_server_url)
+        mirrorsSet.mirror_set_button.click()
+        mirrorsSet.view_snapshot.click()
+        noOfExistingSnapsPrevious = mirrorsSet.countSnapshots()
+        self.new_submit_button.click()
+        noOfExistingSnapsAfter = mirrorsSet.countSnapshots()
+        self.assertEqual(noOfExistingSnapsAfter - noOfExistingSnapsPrevious, 1, "SnapShot didn't created")
 
 

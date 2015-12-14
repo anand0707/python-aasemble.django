@@ -209,4 +209,34 @@ class MirrorsPage(BasePage):
         locator = (by.By.XPATH, ".//table/tbody/tr[1]/td[5][contains(text(), False)]")
         return self._is_element_visible(locator)
         
+class MirrorSetPage(BasePage):
+    
+    @property
+    def mirror_set_button(self):
+        '''Finds the mirror set button'''
+        return self.selenium.find_element(by.By.LINK_TEXT, 'Mirror-Sets')
+        
+    def create_mirror_set(self, name):
+        '''Create new mirror set with given name'''
+        self.selenium.find_element(by.By.ID, 'id_name').send_keys(name)
+        # Selecting all options
+        options = self.selenium.find_element(by.By.ID, 'id_mirrors')
+        for option in options.find_elements(by.By.TAG_NAME, 'option'):
+            option.click()
+        self.new_submit_button.click()
+    
+    @property
+    def view_snapshot(self):
+        '''View snapshot in first row'''
+        return self.driver.find_element(by.By.XPATH, "//a[contains(text(), 'View snapshots')]")
+        
+    def countSnapshots(self):
+        existingSnaps = self.driver.find_elements(by.By.XPATH, "//table[@class='table table-striped']//tr")
+        noOfExistingSnaps = len(existingSnaps)
+        return noOfExistingSnaps
+
+    
+
+    
+        
 
