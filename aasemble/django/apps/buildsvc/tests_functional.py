@@ -4,7 +4,7 @@ import re
 from django.test.utils import override_settings, skipIf
 
 from aasemble.django.apps.buildsvc.pages.basewebobject import WebObject
-from aasemble.django.apps.buildsvc.pages.overcastPages import BuildPage, LogoutPage, MirrorsPage, OverviewPage, ProfilePage, SourcePage
+from aasemble.django.apps.buildsvc.pages.overcastPages import BuildPage, LogoutPage, MirrorsPage, MirrorSetPage, OverviewPage, ProfilePage, SourcePage
 
 from aasemble.django.apps.buildsvc.tasks import poll_one
 
