@@ -195,7 +195,7 @@ class MirrorsPage(BasePage):
         return self.driver.find_element(by.By.ID, 'id_components')
         
     @property
-    def summit_button(self):
+    def submit_button(self):
         '''Finds submit button'''
         return self.driver.find_element(by.By.XPATH, './/button[@type="submit" and contains(.,"Submit")]')
         
