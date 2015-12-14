@@ -167,7 +167,7 @@ class BuildPage(BasePage):
         else:
             return True
 
-class Mirrors(BasePage):
+class MirrorsPage(BasePage):
 
     @property
     def mirror_button(self):
