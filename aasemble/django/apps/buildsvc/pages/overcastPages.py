@@ -23,7 +23,7 @@ class BasePage(object):
         '''Finds NEW and Submit button. Both buttons have same class name
         and live in diffrent views thus giving us opportunity of code reuse'''
         return self.driver.find_element(by.By.CSS_SELECTOR, '.btn.btn-primary')
-        
+
     def _is_element_visible(self, locator):
         try:
             return self.driver.find_element(*locator).is_displayed()
@@ -185,58 +185,52 @@ class MirrorsPage(BasePage):
     def url_field(self):
         '''Finds url field'''
         return self.driver.find_element(by.By.ID, 'id_url')
-        
+
     @property
     def series_field(self):
         '''Finds series filed'''
         return self.driver.find_element(by.By.ID, 'id_series')
-        
+
     @property
     def component_field(self):
         '''Finds component field'''
         return self.driver.find_element(by.By.ID, 'id_components')
-        
+
     @property
     def submit_button(self):
         '''Finds submit button'''
         return self.driver.find_element(by.By.XPATH, './/button[@type="submit" and contains(.,"Submit")]')
-        
+
     def verify_mirror_visible_by_url(self, value):
         locator = (by.By.LINK_TEXT, value)
         return self._is_element_visible(locator)
-        
+
     def verify_mirror_private(self):
         locator = (by.By.XPATH, ".//table/tbody/tr[1]/td[5][contains(text(), False)]")
         return self._is_element_visible(locator)
-        
+
 class MirrorSetPage(BasePage):
-    
+
     @property
     def mirror_set_button(self):
         '''Finds the mirror set button'''
-        return self.selenium.find_element(by.By.LINK_TEXT, 'Mirror-Sets')
-        
+        return self.driver.find_element(by.By.LINK_TEXT, 'Mirror-Sets')
+
     def create_mirror_set(self, name):
         '''Create new mirror set with given name'''
-        self.selenium.find_element(by.By.ID, 'id_name').send_keys(name)
+        self.driver.find_element(by.By.ID, 'id_name').send_keys(name)
         # Selecting all options
-        options = self.selenium.find_element(by.By.ID, 'id_mirrors')
+        options = self.driver.find_element(by.By.ID, 'id_mirrors')
         for option in options.find_elements(by.By.TAG_NAME, 'option'):
             option.click()
         self.new_submit_button.click()
-    
+
     @property
     def view_snapshot(self):
         '''View snapshot in first row'''
         return self.driver.find_element(by.By.XPATH, "//a[contains(text(), 'View snapshots')]")
-        
+
     def countSnapshots(self):
         existingSnaps = self.driver.find_elements(by.By.XPATH, "//table[@class='table table-striped']//tr")
         noOfExistingSnaps = len(existingSnaps)
         return noOfExistingSnaps
-
-    
-
-    
-        
-
