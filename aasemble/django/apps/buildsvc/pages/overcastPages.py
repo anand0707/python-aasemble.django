@@ -199,7 +199,7 @@ class Mirrors(BasePage):
         '''Finds submit button'''
         return self.driver.find_element(by.By.XPATH, './/button[@type="submit" and contains(.,"Submit")]')
         
-    def verify_mirror_visible_by_url(self, value)
+    def verify_mirror_visible_by_url(self, value):
         locator = (by.By.LINK_TEXT, value)
         return self._is_element_visible(locator)
         
