@@ -177,7 +177,7 @@ class RepositoryFunctionalTests(WebObject):
         mirrorsSet.mirror_set_button.click()
         mirrorsSet.view_snapshot.click()
         noOfExistingSnapsPrevious = mirrorsSet.countSnapshots()
-        self.new_submit_button.click()
+        mirrorsSet.new_submit_button.click()
         noOfExistingSnapsAfter = mirrorsSet.countSnapshots()
         self.assertEqual(noOfExistingSnapsAfter - noOfExistingSnapsPrevious, 1, "SnapShot didn't created")
 
