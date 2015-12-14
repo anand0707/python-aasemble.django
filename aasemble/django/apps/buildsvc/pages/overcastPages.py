@@ -169,6 +169,7 @@ class BuildPage(BasePage):
         else:
             return True
 
+
 class MirrorsPage(BasePage):
 
     @property
@@ -208,6 +209,7 @@ class MirrorsPage(BasePage):
     def verify_mirror_private(self):
         locator = (by.By.XPATH, ".//table/tbody/tr[1]/td[5][contains(text(), False)]")
         return self._is_element_visible(locator)
+
 
 class MirrorSetPage(BasePage):
 

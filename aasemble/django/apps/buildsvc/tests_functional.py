@@ -150,7 +150,7 @@ class RepositoryFunctionalTests(WebObject):
         mirrorsPage.submit_button.click()
         self.assertTrue(mirrorsPage.verify_mirror_visible_by_url('%s%s' % (self.live_server_url, '/apt/brandon/brandon')))
         self.assertTrue(mirrorsPage.verify_mirror_private())
-        
+
     def test_mirror_set(self):
         '''This test verifies the working of mirror set'''
         self.create_login_session('brandon')
@@ -159,7 +159,7 @@ class RepositoryFunctionalTests(WebObject):
         mirrorsSet.mirror_set_button.click()
         mirrorsSet.new_submit_button.click()
         mirrorsSet.create_mirror_set(name='mySet')
-        
+
     def test_snapshot_operations(self):
         '''This test verifies the operations snapshot.
          ' Steps:
@@ -180,5 +180,3 @@ class RepositoryFunctionalTests(WebObject):
         mirrorsSet.new_submit_button.click()
         noOfExistingSnapsAfter = mirrorsSet.countSnapshots()
         self.assertEqual(noOfExistingSnapsAfter - noOfExistingSnapsPrevious, 1, "SnapShot didn't created")
-
-
