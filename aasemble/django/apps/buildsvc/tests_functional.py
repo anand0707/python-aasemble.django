@@ -155,7 +155,7 @@ class RepositoryFunctionalTests(WebObject):
         '''This test verifies the working of mirror set'''
         self.create_login_session('brandon')
         mirrorsSet = MirrorSetPage(self.driver)
-        mirrorsSet.get(self.live_server_url)
+        mirrorsSet.driver.get(self.live_server_url)
         mirrorsSet.mirror_set_button.click()
         mirrorsSet.new_submit_button.click()
         mirrorsSet.create_mirror_set(name='mySet')
@@ -173,7 +173,7 @@ class RepositoryFunctionalTests(WebObject):
         self.test_mirror_set()
         self.create_login_session('brandon')
         mirrorsSet = MirrorSetPage(self.driver)
-        mirrorsSet.get(self.live_server_url)
+        mirrorsSet.driver.get(self.live_server_url)
         mirrorsSet.mirror_set_button.click()
         mirrorsSet.view_snapshot.click()
         noOfExistingSnapsPrevious = mirrorsSet.countSnapshots()
