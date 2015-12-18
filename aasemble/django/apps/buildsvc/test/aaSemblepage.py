@@ -256,12 +256,8 @@ class SnapshotPage(BasePage):
         return self.driver.find_element(by.By.LINK_TEXT, 'Snapshots')
 
     def getAllTagsBySnapshot(self, snapshotuuid):
-        print self.driver.page_source
         elements = self.driver.find_elements(by.By.XPATH, '//table[@class="table table-striped"]//tr')
         for ele in elements:
-            print "\n####snapshot####\n"
-            print ele.find_element(by.By.XPATH, '//td[3]').text
-            print "\n########\n"
             if ele.find_element(by.By.XPATH, '//td[3]').text == snapshotuuid:
                 snaps = ele.find_elements(by.By.XPATH, '//td[4]')
         return snaps
@@ -271,7 +267,7 @@ class SnapshotPage(BasePage):
         for ele in elements:
             if ele.find_element(by.By.XPATH, '//td[3]').text == snapshotuuid:
                 ele.find_element(by.By.XPATH, '//td[6]').click()
-                ele.find_element('//div[@class="form-group"]/label').send_keys(tag)
+                ele.find_element(by.By.XPATH, '//div[@class="form-group"]/label').send_keys(tag)
                 self.new_submit_button.click()
 
     def verify_tag_present(self, snapshotuuid, tag):
