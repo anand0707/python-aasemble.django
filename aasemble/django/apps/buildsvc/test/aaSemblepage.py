@@ -234,7 +234,8 @@ class MirrorSetPage(BasePage):
             print ("\n###\ninside for loop\n######\n")
             if ele.find_element(by.By.XPATH, '//td[2]').text == mirrorSetName:
                 print ("\n###\ninside for if\n######\n")
-                return ele.find_element(by.By.XPATH, '//td[3]')
+                # return ele.find_element(by.By.XPATH, '//td[3]')
+                ele.find_element(by.By.XPATH, '//td[3]').click()
 
     def countSnapshots(self):
         print (self.driver.page_source)
