@@ -231,7 +231,9 @@ class MirrorSetPage(BasePage):
         '''View snapshot in first row'''
         elements = self.driver.find_elements(by.By.XPATH, '//table[@class="table table-striped"]//tr')
         for ele in elements:
+            print ("\n###\ninside for loop\n######\n")
             if ele.find_element(by.By.XPATH, '//td[2]').text == mirrorSetName:
+                print ("\n###\ninside for if\n######\n")
                 return ele.find_element(by.By.XPATH, '//td[3]')
 
     def countSnapshots(self):
