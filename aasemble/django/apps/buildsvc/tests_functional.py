@@ -192,6 +192,7 @@ class RepositoryFunctionalTests(WebObject):
         viewButton = mirrorsSet.view_snapshot('mySet')
         viewButton.click()
         mirrorsSet.new_submit_button.click()
+        mirrorsSet.mirror_set_button.click()
         uuid = mirrorsSet.getLastestSnapShot_uuid("mySet")
         snapshot = SnapshotPage(self.driver)
         snapshot.snapshot_button.click()
