@@ -194,6 +194,7 @@ class RepositoryFunctionalTests(WebObject):
         mirrorsSet.new_submit_button.click()
         mirrorsSet.mirror_set_button.click()
         uuid = mirrorsSet.getLastestSnapShot_uuid("mySet")
+        print ('uuid: %s' %(uuid))
         snapshot = SnapshotPage(self.driver)
         snapshot.snapshot_button.click()
         # create new tag
