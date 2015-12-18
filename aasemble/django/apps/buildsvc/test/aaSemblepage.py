@@ -229,6 +229,7 @@ class MirrorSetPage(BasePage):
 
     def view_snapshot(self, mirrorSetName):
         '''View snapshot in first row'''
+        print self.driver.page_source
         elements = self.driver.find_elements(by.By.XPATH, '//table[@class="table table-striped"]//tr')
         for ele in elements:
             if ele.find_element(by.By.XPATH, '//td[2]').text == mirrorSetName:
