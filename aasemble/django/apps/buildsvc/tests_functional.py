@@ -195,7 +195,7 @@ class RepositoryFunctionalTests(WebObject):
         mirrorsSet.mirror_set_button.click()
         uuid = mirrorsSet.getLastestSnapShot_uuid("mySet")
         print "\n#############################################################\n"
-        print uuid
+        print uuid.text
         print "\n#############################################################\n"
         snapshot = SnapshotPage(self.driver)
         snapshot.snapshot_button.click()
