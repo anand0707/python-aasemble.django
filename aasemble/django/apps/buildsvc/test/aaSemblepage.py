@@ -267,7 +267,7 @@ class SnapshotPage(BasePage):
         for ele in elements:
             if ele.find_element(by.By.XPATH, '//td[3]').text == snapshotuuid:
                 ele.find_element(by.By.XPATH, '//td[6]').click()
-                ele.find_element(by.By.XPATH, '//div[@class="form-group"]/label').send_keys(tag)
+                ele.find_element(by.By.XPATH, '//div[@class="form-group"]').send_keys(tag)
                 self.new_submit_button.click()
 
     def verify_tag_present(self, snapshotuuid, tag):
