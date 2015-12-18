@@ -177,7 +177,7 @@ class RepositoryFunctionalTests(WebObject):
         mirrorsSet.mirror_set_button.click()
         viewButton = mirrorsSet.view_snapshot('mySet')
         print ("\n####################\n")
-        print viewButton.getAttribute("outerHTML")
+        print viewButton.get_attribute("outerHTML")
         viewButton.click()
         print ("\n#####################\n")
         print ("\n##################################\n")
