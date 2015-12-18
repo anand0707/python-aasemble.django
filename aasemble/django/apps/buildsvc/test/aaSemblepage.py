@@ -31,6 +31,11 @@ class BasePage(object):
                 Exceptions.ElementNotVisibleException):
             return False
 
+    @property
+    def delete_button(self):
+        '''Finds package delete button'''
+        return self.driver.find_element(by.By.CSS_SELECTOR, '.btn.btn-danger')
+
 
 class SourcePage(BasePage):
     '''This class is to perform all operations on sourcePackage
@@ -85,11 +90,6 @@ class SourcePage(BasePage):
         '''Finds package edit button.
         NOTE: Only one package is expected at once'''
         return self.driver.find_element(by.By.CSS_SELECTOR, '.glyphicon.glyphicon-pencil')
-
-    @property
-    def delete_button(self):
-        '''Finds package delete button'''
-        return self.driver.find_element(by.By.CSS_SELECTOR, '.btn.btn-danger')
 
     @property
     def sources_button(self):
@@ -238,3 +238,57 @@ class MirrorSetPage(BasePage):
         existingSnaps = self.driver.find_elements(by.By.XPATH, "//table[@class='table table-striped']//tr")
         noOfExistingSnaps = len(existingSnaps)
         return noOfExistingSnaps
+
+    def getLastestSnapShot_uuid(self, mirrorSetName):
+        '''Returna lats snap in the list'''
+        viewButton = self.view_snapshot(mirrorSetName)
+        viewButton.click()
+        existingSnaps = self.driver.find_elements(by.By.XPATH, '//tr')
+        lastSnap = existingSnaps[-1]
+        return lastSnap.find_element(by.By.XPATH, '//td[1]')
+
+
+class SnapshotPage(BasePage):
+
+    @property
+    def snapshot_button(self):
+        '''Finds the snapshot button'''
+        return self.driver.find_element(by.By.LINK_TEXT, 'Snapshots')
+
+    def getAllTagsBySnapshot(self, snapshotuuid):
+        elements = self.driver.find_elements(by.By.XPATH, '//table[@class="table table-striped"]//tr')
+        for ele in elements:
+            if ele.find_element(by.By.XPATH, '//td[3]').text == snapshotuuid:
+                snaps = ele.find_elements(by.By.XPATH, '//td[4]')
+        return snaps
+
+    def create_new_snapshot_tag(self, snapshotuuid, tag):
+        elements = self.driver.find_elements(by.By.XPATH, '//table[@class="table table-striped"]//tr')
+        for ele in elements:
+            if ele.find_element(by.By.XPATH, '//td[3]').text == snapshotuuid:
+                ele.find_element(by.By.XPATH, '//td[6]').click()
+                ele.find_element('//div[@class="form-group"]/label').send_keys(tag)
+                self.new_submit_button.click()
+
+    def verify_tag_present(self, snapshotuuid, tag):
+        snaptags = self.getAllTagsBySnapshot(snapshotuuid)
+        for snaptag in snaptags:
+            if tag == snaptag.text:
+                return True
+        return False
+
+    def edit_snapshot_tag(self, snapshotuuid, tag, oldtag):
+        snaptags = self.getAllTagsBySnapshot(snapshotuuid)
+        for snaptag in snaptags:
+            if oldtag == snaptag.text:
+                snaptag.click()
+                self.driver.find_element('//div[@class="form-group"]/label').clear()
+                self.driver.find_element('//div[@class="form-group"]/label').send_keys(tag)
+                self.new_submit_button.click()
+
+    def deleted_snapshot_tag(self, snapshotuuid, tag):
+        snaptags = self.getAllTagsBySnapshot(snapshotuuid)
+        for snaptag in snaptags:
+            if tag == snaptag.text:
+                snaptag.click()
+                self.delete_button.click()

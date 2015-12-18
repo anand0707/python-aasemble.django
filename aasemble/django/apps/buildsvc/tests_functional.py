@@ -5,7 +5,7 @@ from django.test.utils import override_settings, skipIf
 
 from aasemble.django.apps.buildsvc.tasks import poll_one
 
-from aasemble.django.apps.buildsvc.test.aaSemblepage import BuildPage, LogoutPage, MirrorSetPage, MirrorsPage, OverviewPage, ProfilePage, SourcePage
+from aasemble.django.apps.buildsvc.test.aaSemblepage import BuildPage, LogoutPage, MirrorSetPage, MirrorsPage, OverviewPage, ProfilePage, SnapshotPage, SourcePage
 from aasemble.django.apps.buildsvc.test.basewebobject import WebObject
 
 from aasemble.django.tests import create_session_cookie
@@ -166,7 +166,7 @@ class RepositoryFunctionalTests(WebObject):
          1. Create new mirror and mirrorset for user 'brandon'.
          2. "View snapshot" for its first (only in this case) mirrorset.
          3. Save the number of lines in tables.
-         4. Create a snaphot
+         4. Create a snapshot
          5. Repeat step 3.
          6. Difference should be exaclty one.'''
         self.test_new_mirrors()
@@ -181,3 +181,29 @@ class RepositoryFunctionalTests(WebObject):
         mirrorsSet.new_submit_button.click()
         noOfExistingSnapsAfter = mirrorsSet.countSnapshots()
         self.assertEqual(noOfExistingSnapsAfter - noOfExistingSnapsPrevious, 1, "SnapShot didn't created")
+
+    def test_snapshot_tags(self):
+        self.test_new_mirrors()
+        self.test_mirror_set()
+        self.create_login_session('brandon')
+        mirrorsSet = MirrorSetPage(self.driver)
+        mirrorsSet.driver.get(self.live_server_url)
+        mirrorsSet.mirror_set_button.click()
+        viewButton = mirrorsSet.view_snapshot('mySet')
+        viewButton.click()
+        mirrorsSet.new_submit_button.click()
+        uuid = self.getLastestSnapShot_uuid("mySet")
+        snapshot = SnapshotPage(self.driver)
+        snapshot.snapshot_button.click()
+        # create new tag
+        snapshot.create_new_snapshot_tag(snapshotuuid=uuid, tag='testtag')
+        self.assertTrue(snapshot.verify_tag_present(snapshotuuid=uuid, tag='testtag'), "Tag not added")
+        # edit snapshot tag
+        snapshot.edit_snapshot_tag(snapshotuuid=uuid, tag='testtagedited'. oldtag='testtag')
+        self.assertTrue(snapshot.verify_tag_present(snapshotuuid=uuid, tag='testtagedited'), "Tag not edited")
+        # deleted snapshot tag
+        snapshot.deleted_snapshot_tag(snapshotuuid=uuid, tag='testtagedited')
+        self.assertFalse(snapshot.verify_tag_present(snapshotuuid=uuid, tag='testtagedited'), "Tag not deleted")
+        # add one more tag on same snapshot
+        snapshot.create_new_snapshot_tag(snapshotuuid=uuid, tag='testsecondtag')
+        self.assertTrue(snapshot.verify_tag_present(snapshotuuid=uuid ,tag='testsecondtag'), "Tag not added")
