@@ -199,7 +199,7 @@ class RepositoryFunctionalTests(WebObject):
         snapshot.create_new_snapshot_tag(snapshotuuid=uuid, tag='testtag')
         self.assertTrue(snapshot.verify_tag_present(snapshotuuid=uuid, tag='testtag'), "Tag not added")
         # edit snapshot tag
-        snapshot.edit_snapshot_tag(snapshotuuid=uuid, tag='testtagedited'. oldtag='testtag')
+        snapshot.edit_snapshot_tag(snapshotuuid=uuid, tag='testtagedited', oldtag='testtag')
         self.assertTrue(snapshot.verify_tag_present(snapshotuuid=uuid, tag='testtagedited'), "Tag not edited")
         # deleted snapshot tag
         snapshot.deleted_snapshot_tag(snapshotuuid=uuid, tag='testtagedited')
