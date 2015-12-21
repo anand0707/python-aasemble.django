@@ -285,8 +285,8 @@ class SnapshotPage(BasePage):
         for snaptag in snaptags:
             if oldtag == snaptag.text:
                 snaptag.click()
-                self.driver.find_element('//div[@class="form-group"]/label').clear()
-                self.driver.find_element('//div[@class="form-group"]/label').send_keys(tag)
+                self.driver.find_element(by.By.ID, 'id_tag').clear()
+                self.driver.find_element(by.By.ID, 'id_tag').send_keys(tag)
                 self.new_submit_button.click()
 
     def deleted_snapshot_tag(self, snapshotuuid, tag):
