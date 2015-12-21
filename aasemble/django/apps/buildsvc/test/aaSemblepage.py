@@ -270,9 +270,8 @@ class SnapshotPage(BasePage):
         for ele in elements[1:]:
             if ele.find_element(by.By.XPATH, '//td[3]').text == snapshotuuid:
                 ele.find_element(by.By.XPATH, '//td[6]').click()
-                self.driver.find_element(by.By.XPATH, '//div[@class="form-group"]').send_keys(tag)
+                self.driver.find_element(by.By.ID, 'id_tag').send_keys(tag)
                 self.new_submit_button.submit()
-                print self.driver.page_source
 
     def verify_tag_present(self, snapshotuuid, tag):
         snaptags = self.getAllTagsBySnapshot(snapshotuuid)
