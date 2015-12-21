@@ -264,7 +264,7 @@ class SnapshotPage(BasePage):
 
     def create_new_snapshot_tag(self, snapshotuuid, tag):
         elements = self.driver.find_elements(by.By.XPATH, '//table[@class="table table-striped"]//tr')
-        for ele in elements:
+        for ele in elements[1:]:
             print "\n######################\n"
             print ele.get_attribute("outerHTML")
             print "\n######################\n"
