@@ -290,6 +290,6 @@ class SnapshotPage(BasePage):
         snaptags = self.getAllTagsBySnapshot(snapshotuuid)
         for snaptag in snaptags:
             if tag == snaptag.text:
-                snaptag.click()
+                self.driver.find_element(by.By.XPATH, "//a[contains(text(), 'testtagedited')]").click()
                 self.delete_button.click()
     
