@@ -258,9 +258,6 @@ class SnapshotPage(BasePage):
     def getAllTagsBySnapshot(self, snapshotuuid):
         elements = self.driver.find_elements(by.By.XPATH, '//table[@class="table table-striped"]//tr')
         for ele in elements:
-            print "\n##################\n"
-            print ele.get_attribute("outerHTML")
-            print "\n##################\n"
             if ele.find_element(by.By.XPATH, '//td[3]').text == snapshotuuid:
                 snaps = ele.find_elements(by.By.XPATH, '//td[4]')
         return snaps
@@ -276,6 +273,9 @@ class SnapshotPage(BasePage):
     def verify_tag_present(self, snapshotuuid, tag):
         snaptags = self.getAllTagsBySnapshot(snapshotuuid)
         for snaptag in snaptags:
+            print "\n#############\n"
+            print snaptag.text
+            print "\n#############\n"
             if tag == snaptag.text:
                 return True
         return False
