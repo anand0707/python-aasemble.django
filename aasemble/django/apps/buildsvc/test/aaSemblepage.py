@@ -255,6 +255,8 @@ class MirrorSetPage(BasePage):
         print "\n###########################################\n"
         mirrorLink.click()
         print "\n"
+        import time
+        time.sleep(5)
         options = self.driver.find_element(by.By.ID, 'id_mirrors')
         for option in options.find_elements(by.By.TAG_NAME, 'option'):
             option.click()
