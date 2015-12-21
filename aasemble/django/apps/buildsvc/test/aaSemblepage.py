@@ -259,7 +259,7 @@ class SnapshotPage(BasePage):
         elements = self.driver.find_elements(by.By.XPATH, '//table[@class="table table-striped"]//tr')
         for ele in elements:
             print "\n##################\n"
-            print ele.get_attribue("outerHTML")
+            print ele.get_attribute("outerHTML")
             print "\n##################\n"
             if ele.find_element(by.By.XPATH, '//td[3]').text == snapshotuuid:
                 snaps = ele.find_elements(by.By.XPATH, '//td[4]')
