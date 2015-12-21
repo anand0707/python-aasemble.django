@@ -259,7 +259,7 @@ class SnapshotPage(BasePage):
         elements = self.driver.find_elements(by.By.XPATH, '//table[@class="table table-striped"]//tr')
         for ele in elements:
             if ele.find_element(by.By.XPATH, '//td[3]').text == snapshotuuid:
-                snaps = ele.find_elements(by.By.XPATH, '//td[4]')
+                snaps = ele.find_elements(by.By.XPATH, '//td[5]')
         return snaps
 
     def create_new_snapshot_tag(self, snapshotuuid, tag):
