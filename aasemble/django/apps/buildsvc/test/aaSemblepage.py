@@ -249,6 +249,7 @@ class MirrorSetPage(BasePage):
         '''This method deletes the mirror-set'''
         mirrorLink = self.getMirrorSetID_button(mirrorSetName)
         mirrorLink.click()
+        print self.driver.page_source
         options = self.driver.find_element(by.By.ID, 'id_mirrors')
         for option in options.find_elements(by.By.TAG_NAME, 'option'):
             option.click()
