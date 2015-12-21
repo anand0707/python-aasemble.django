@@ -249,6 +249,8 @@ class MirrorSetPage(BasePage):
         '''This method deletes the mirror-set'''
         mirrorLink = self.getMirrorSetID_button(mirrorSetName)
         print "\n###########################################\n"
+        print mirrorLink.get_attribute("outerHTML")
+        print "\n###########################################\n"
         print mirrorLink.is_enabled()
         print "\n###########################################\n"
         mirrorLink.click()
