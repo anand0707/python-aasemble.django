@@ -273,9 +273,6 @@ class SnapshotPage(BasePage):
     def verify_tag_present(self, snapshotuuid, tag):
         snaptags = self.getAllTagsBySnapshot(snapshotuuid)
         for snaptag in snaptags:
-            print "\n#############\n"
-            print snaptag.text
-            print "\n#############\n"
             if tag == snaptag.text:
                 return True
         return False
@@ -285,6 +282,7 @@ class SnapshotPage(BasePage):
         for snaptag in snaptags:
             if oldtag == snaptag.text:
                 snaptag.click()
+                print self.driver.page_source
                 self.driver.find_element(by.By.ID, 'id_tag').clear()
                 self.driver.find_element(by.By.ID, 'id_tag').send_keys(tag)
                 self.new_submit_button.click()
