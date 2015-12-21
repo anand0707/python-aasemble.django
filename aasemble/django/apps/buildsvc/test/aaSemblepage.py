@@ -292,3 +292,4 @@ class SnapshotPage(BasePage):
             if tag == snaptag.text:
                 snaptag.click()
                 self.delete_button.click()
+    
