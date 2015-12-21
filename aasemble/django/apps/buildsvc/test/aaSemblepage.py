@@ -281,7 +281,7 @@ class SnapshotPage(BasePage):
         snaptags = self.getAllTagsBySnapshot(snapshotuuid)
         for snaptag in snaptags:
             if oldtag == snaptag.text:
-                snaptag.find_element(by.By.XPATH, '//td').click()
+                self.driver.find_element(by.By.ID, "//a[contains(text(), %s)]" %(oldtag))
                 self.driver.find_element(by.By.ID, 'id_tag').clear()
                 self.driver.find_element(by.By.ID, 'id_tag').send_keys(tag)
                 self.new_submit_button.click()
