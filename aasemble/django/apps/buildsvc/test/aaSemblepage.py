@@ -1,6 +1,7 @@
 import selenium.common.exceptions as Exceptions
 
 from selenium.webdriver.common import by
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 
 
@@ -336,8 +337,7 @@ class SnapshotPage(BasePage):
         for snaptag in snaptags:
             if oldtag == snaptag.text:
                 self.driver.find_element(by.By.LINK_TEXT, oldtag).click()
-                self.driver.find_element(by.By.ID, 'id_tag').clear()
-                self.driver.find_element(by.By.ID, 'id_tag').send_keys(tag)
+                self.driver.find_element(by.By.ID, 'id_tag').send_keys(Keys.HOME,Keys.chord(Keys.SHIFT,Keys.END), tag)
                 self.new_submit_button.click()
 
     def deleted_snapshot_tag(self, snapshotuuid, tag):
