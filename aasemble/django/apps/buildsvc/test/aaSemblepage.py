@@ -339,7 +339,7 @@ class SnapshotPage(BasePage):
                 self.driver.find_element(by.By.LINK_TEXT, oldtag).click()
                 self.driver.find_element(by.By.ID, 'id_tag').clear()
                 print "\n#######\n"
-                prin self.driver.page_source
+                print self.driver.page_source
                 print "\n#######\n"
                 self.driver.find_element(by.By.ID, 'id_tag').send_keys(tag)
                 self.new_submit_button.click()
