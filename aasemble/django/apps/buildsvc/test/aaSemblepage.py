@@ -28,7 +28,7 @@ class BasePage(object):
     @property
     def delete_button(self):
         '''Finds package delete button'''
-        element =  WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((by.By.CSS_SELECTOR, '.btn.btn-danger')))
+        element = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((by.By.CSS_SELECTOR, '.btn.btn-danger')))
         return element
 
     def _is_element_visible(self, locator):
