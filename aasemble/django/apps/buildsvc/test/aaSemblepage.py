@@ -28,7 +28,7 @@ class BasePage(object):
     @property
     def delete_button(self):
         '''Finds package delete button'''
-        return self.driver.find_element(by.By.CSS_SELECTOR, '.btn.btn-danger')
+        element =  WebDriverWait(self.driver, 20).untii(ExpectedConditions.find_element(by.By.CSS_SELECTOR, '.btn.btn-danger'))
 
     def _is_element_visible(self, locator):
         try:
@@ -337,11 +337,9 @@ class SnapshotPage(BasePage):
         for snaptag in snaptags:
             if oldtag == snaptag.text:
                 self.driver.find_element(by.By.LINK_TEXT, oldtag).click()
-                self.driver.find_element(by.By.ID, 'id_tag').clear()
-                print ("\n#######\n")
-                print (self.driver.page_source)
-                print ("\n#######\n")
-                self.driver.find_element(by.By.ID, 'id_tag').send_keys(tag)
+                element = self.driver.find_element(by.By.ID, 'id_tag')
+                element.clear()
+                element.send_keys(tag)
                 self.new_submit_button.click()
 
     def deleted_snapshot_tag(self, snapshotuuid, tag):
