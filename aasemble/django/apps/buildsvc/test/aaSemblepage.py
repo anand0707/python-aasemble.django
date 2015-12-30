@@ -1,8 +1,8 @@
 import selenium.common.exceptions as Exceptions
 
 from selenium.webdriver.common import by
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select, WebDriverWait
 
 
 class BasePage(object):
