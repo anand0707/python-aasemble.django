@@ -1,7 +1,6 @@
 import selenium.common.exceptions as Exceptions
 
 from selenium.webdriver.common import by
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
 
@@ -28,8 +27,8 @@ class BasePage(object):
     @property
     def delete_button(self):
         '''Finds package delete button'''
-        #element = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((by.By.CSS_SELECTOR, '.btn.btn-danger')))
-        #return element
+        # element = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((by.By.CSS_SELECTOR, '.btn.btn-danger')))
+        # return element
         return self.driver.find_element_by_css_selector('.btn.btn-danger')
 
     def _is_element_visible(self, locator):
