@@ -1,9 +1,21 @@
+from django.conf import settings
 from django.contrib.auth import models as auth_models
-from django.test import TestCase
+
 
 import mock
 
+from aasemble.django.tests import AasembleTestCase as TestCase
+
 from .models import Mirror, MirrorSet, Snapshot, Tags
+
+
+class MirrorTestCase(TestCase):
+    def test_sources_list(self):
+        mirror = Mirror.objects.get(id=2)
+        url = '{0}/{1}/2.example.com/'.format(settings.MIRRORSVC_BASE_URL, "829bd2cd-eaaf-4244-a6a6-569cab027a6c")
+        self.assertEquals(mirror.sources_list,
+                          ('deb {0} trusty main\n'
+                           'deb-src {0} trusty main\n').format(url))
 
 
 class SnapshotTestCase(TestCase):
@@ -15,7 +27,7 @@ class SnapshotTestCase(TestCase):
         ms.mirrors.add(m)
         s = Snapshot.objects.create(mirrorset=ms)
         Tags.objects.create(snapshot=s, tag='test')
-        perform_snapshot.delay.assert_called_with(s.id)
+        perform_snapshot.apply_async.assert_called_with((s.id,), countdown=5)
 
     @mock.patch('aasemble.django.apps.mirrorsvc.models.Snapshot.sync_dists')
     @mock.patch('aasemble.django.apps.mirrorsvc.models.Snapshot.symlink_pool')

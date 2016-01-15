@@ -74,7 +74,8 @@ class RepreproDriver(RepositoryDriver):
 
     def key_data(self):
         if self.repository.key_id:
-            return run_cmd(['gpg', '-a', '--export', self.repository.key_id])
+            env = {'GNUPG_HOME': self.repository.gpghome()}
+            return run_cmd(['gpg', '-a', '--export', self.repository.key_id], override_env=env)
 
 
 def get_repo_driver(repository):
@@ -116,7 +117,10 @@ class Repository(models.Model):
             self.save()
 
     def first_series(self):
-        return Series.objects.get_or_create(defaults={'name': settings.BUILDSVC_DEFAULT_SERIES_NAME}, repository=self)[0]
+        try:
+            return self.series.all()[0]
+        except IndexError:
+            return Series.objects.create(name=settings.BUILDSVC_DEFAULT_SERIES_NAME, repository=self)
 
     @property
     def basedir(self):
@@ -124,11 +128,12 @@ class Repository(models.Model):
         return ensure_dir(basedir)
 
     def confdir(self):
-        return os.path.join(self.basedir, 'conf')
+        confdir = os.path.join(self.basedir, 'conf')
+        return ensure_dir(confdir)
 
     def outdir(self):
-        return os.path.join(settings.BUILDSVC_REPOS_BASE_PUBLIC_DIR,
-                            self.user.username, self.name)
+        outdir = os.path.join(settings.BUILDSVC_REPOS_BASE_PUBLIC_DIR, self.user.username, self.name)
+        return ensure_dir(outdir)
 
     @property
     def buildlogdir(self):
@@ -144,11 +149,14 @@ class Repository(models.Model):
 
     def _reprepro(self, *args):
         env = {'GNUPG_HOME': self.gpghome()}
-        return run_cmd(['reprepro', '-b', self.basedir] + list(args),
+        return run_cmd(['reprepro', '-b', self.basedir, '--waitforlock=10'] + list(args),
                        override_env=env)
 
     def key_data(self):
         return get_repo_driver(self).key_data()
+
+    def key_url(self):
+        return '%s/repo.key' % (self.base_url,)
 
     def export_key(self):
         keypath = os.path.join(self.outdir(), 'repo.key')
@@ -157,6 +165,7 @@ class Repository(models.Model):
                 fp.write(self.key_data())
 
     def export(self):
+        self.first_series()
         self.ensure_key()
         self.ensure_directory_structure()
         self.export_key()
@@ -219,6 +228,14 @@ class Series(models.Model):
     def process_changes(self, changes_file):
         self.repository.process_changes(self.name, changes_file)
 
+    def build_sources_list(self):
+        sources = []
+        for series in ('trusty', 'trusty-updates', 'trusty-security'):
+            sources += ['deb http://archive.ubuntu.com/ubuntu {} main universe restricted multiverse'.format(series)]
+        sources += [self.binary_source_list(force_trusted=True)]
+        sources += sum([extdep.deb_lines for extdep in self.externaldependency_set.all()], [])
+        return '\n'.join(sources)
+
     def export(self):
         self.repository.export()
 
@@ -236,7 +253,11 @@ class ExternalDependency(models.Model):
 
     @property
     def deb_line(self):
-        return 'deb %s %s %s' % (self.url, self.series, self.components)
+        return '\n'.join(self.deb_lines)
+
+    @property
+    def deb_lines(self):
+        return ['deb %s %s %s' % (self.url, series, self.components) for series in self.series.split(' ')]
 
     def user_can_modify(self, user):
         return self.own_series.user_can_modify(user)
@@ -272,6 +293,10 @@ class PackageSource(models.Model):
     def __str__(self):
         return '%s/%s' % (self.git_url, self.branch)
 
+    @property
+    def repository(self):
+        return self.series.repository
+
     def poll(self):
         cmd = ['git', 'ls-remote', self.git_url,
                'refs/heads/%s' % self.branch]
@@ -300,6 +325,7 @@ class PackageSource(models.Model):
         try:
             run_cmd(['git',
                      'clone', self.git_url,
+                     '--recursive',
                      '-b', self.branch,
                      'build'],
                     cwd=tmpdir, logger=logger)
@@ -368,6 +394,9 @@ class PackageSource(models.Model):
 
         if len(parts) != 2:
             raise NotAValidGithubRepository()
+
+        if parts[1].endswith('.git'):
+            parts[1] = parts[1][:-4]
 
         return (parts[0], parts[1])
 

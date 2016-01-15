@@ -3,6 +3,7 @@ import os.path
 from collections import OrderedDict
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.test import override_settings
 
 import mock
@@ -12,6 +13,7 @@ from rest_framework.test import APITestCase
 
 from six.moves.urllib.parse import urlparse
 
+from aasemble.django.apps.buildsvc.models import PackageSource, Repository
 from aasemble.django.apps.mirrorsvc.models import Mirror, Snapshot
 
 
@@ -24,9 +26,16 @@ def authenticate(client, username=None, token=None):
 class APIv1Tests(APITestCase):
     fixtures = ['complete.json']
     base_url = '/api/v1/'
+    view_prefix = 'v1'
+    lookup_type = 'pk'
     source_should_be_embedded_in_build = False
     build_includes_duration = False
-    repository_includes_key_data = False
+    repository_includes_key_data_link = False
+    repository_includes_builds_link = False
+    mirrorset_includes_sources_list = False
+    mirror_includes_sources_list = False
+    repository_should_be_embedded_in_source = False
+    repository_has_build_sources_list = False
 
     def __init__(self, *args, **kwargs):
         super(APIv1Tests, self).__init__(*args, **kwargs)
@@ -41,6 +50,21 @@ class APIv1Tests(APITestCase):
     ####################
     # Repository tests #
     ####################
+
+    def test_fetch_build_sources_list(self):
+        authenticate(self.client, 'brandon')
+        response = self.client.get(self.repository_list_url)
+
+        for repo in response.data['results']:
+            self.client.credentials(HTTP_AUTHORIZATION='')
+            if self.repository_has_build_sources_list:
+                resp = self.client.get(repo['build_sources_list'])
+                self.assertEquals(resp.status_code, 200)
+                self.assertEquals(resp.get('content-type'), 'text/plain')
+            else:
+                self.assertNotIn('build_sources_list', repo)
+                resp = self.client.get(repo['self'] + '/build_sources_list/')
+                self.assertEquals(resp.status_code, 404)
 
     def test_fetch_external_dependencies(self):
         # Use brandon to make sure it works with users who are members
@@ -96,8 +120,14 @@ class APIv1Tests(APITestCase):
                            'user': user,
                            'key_id': u''}
 
-        if self.repository_includes_key_data:
-            expected_result['key'] = None
+        if self.repository_includes_key_data_link:
+            expected_result['key'] = '%s/%s/testrepo/repo.key' % (settings.BUILDSVC_REPOS_BASE_URL, user)
+
+        if self.repository_includes_builds_link:
+            expected_result['builds'] = response.data['self'] + 'builds/'
+
+        if self.repository_has_build_sources_list:
+            expected_result['build_sources_list'] = response.data['self'] + 'build_sources_list/'
 
         self.assertEquals(response.data, expected_result)
         response = self.client.get(response.data['self'])
@@ -162,8 +192,14 @@ class APIv1Tests(APITestCase):
                            'user': 'eric',
                            'key_id': u''}
 
-        if self.repository_includes_key_data:
-            expected_result['key'] = None
+        if self.repository_includes_key_data_link:
+            expected_result['key'] = '%s/eric/testrepo2/repo.key' % (settings.BUILDSVC_REPOS_BASE_URL,)
+
+        if self.repository_includes_builds_link:
+            expected_result['builds'] = response.data['self'] + 'builds/'
+
+        if self.repository_has_build_sources_list:
+            expected_result['build_sources_list'] = response.data['self'] + 'build_sources_list/'
 
         self.assertEquals(response.data, expected_result)
         response = self.client.get(response.data['self'])
@@ -277,8 +313,8 @@ class APIv1Tests(APITestCase):
     def test_fetch_builds(self):
         authenticate(self.client, 'eric')
         # 7 queries: Create transaction, Authenticate, 1 logging entry, count results, fetch results,
-        # rollback transaction, log response
-        with self.assertNumQueries(7):
+        # fetch related results (all in one), rollback transaction, log response
+        with self.assertNumQueries(8):
             response = self.client.get(self.build_list_url)
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.data['count'], 10)
@@ -287,7 +323,7 @@ class APIv1Tests(APITestCase):
     def test_fetch_builds_without_logging(self):
         authenticate(self.client, 'eric')
         # 3 queries: Authenticate, count results, fetch results
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             self.client.get(self.build_list_url)
 
     def test_source_is_linked_or_nested(self):
@@ -304,6 +340,54 @@ class APIv1Tests(APITestCase):
         self.assertEquals(self.build_includes_duration, 'duration' in response.data['results'][0])
         self.assertEquals(self.build_includes_duration, 'build_finished' in response.data['results'][0])
 
+    def test_fetch_builds_by_source(self):
+        authenticate(self.client, 'eric')
+
+        source = PackageSource.objects.get(id=1)
+        url = reverse('{0}_packagesource-detail'.format(self.view_prefix),
+                      kwargs={self.lookup_type: str(getattr(source, self.lookup_type))})
+
+        with self.assertNumQueries(8):
+            response = self.client.get(url + 'builds/')
+            self.assertEquals(response.status_code, 200)
+            self.assertEquals(response.data['count'], 10)
+
+    def test_fetch_builds_by_source_none(self):
+        authenticate(self.client, 'eric')
+
+        source = PackageSource.objects.get(id=2)
+        url = reverse('{0}_packagesource-detail'.format(self.view_prefix),
+                      kwargs={self.lookup_type: str(getattr(source, self.lookup_type))})
+
+        with self.assertNumQueries(6):
+            response = self.client.get(url + 'builds/')
+            self.assertEquals(response.status_code, 200)
+            self.assertEquals(response.data['count'], 0)
+
+    def test_fetch_builds_by_repository(self):
+        authenticate(self.client, 'eric')
+
+        source = Repository.objects.get(id=4)
+        url = reverse('{0}_repository-detail'.format(self.view_prefix),
+                      kwargs={self.lookup_type: str(getattr(source, self.lookup_type))})
+
+        with self.assertNumQueries(8):
+            response = self.client.get(url + 'builds/')
+            self.assertEquals(response.status_code, 200)
+            self.assertEquals(response.data['count'], 10)
+
+    def test_fetch_builds_by_repository_none(self):
+        authenticate(self.client, 'eric')
+
+        source = Repository.objects.get(id=5)
+        url = reverse('{0}_repository-detail'.format(self.view_prefix),
+                      kwargs={self.lookup_type: str(getattr(source, self.lookup_type))})
+
+        with self.assertNumQueries(6):
+            response = self.client.get(url + 'builds/')
+            self.assertEquals(response.status_code, 200)
+            self.assertEquals(response.data['count'], 0)
+
     ################
     # Source tests #
     ################
@@ -311,8 +395,8 @@ class APIv1Tests(APITestCase):
     def test_fetch_sources(self):
         authenticate(self.client, 'eric')
         # 7 queries: Create transaction, Authenticate, 1 logging entry, count results, fetch results,
-        # rollback transaction, log response
-        with self.assertNumQueries(7):
+        # fetch related, rollback transaction, log response
+        with self.assertNumQueries(8):
             response = self.client.get(self.source_list_url)
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.data['count'], 12)
@@ -323,8 +407,8 @@ class APIv1Tests(APITestCase):
         for res in response.data['results']:
             if res['name'] == 'eric2':
                 # 7 queries: Create transaction, Authenticate, 1 logging entry, count results, fetch results,
-                # rollback transaction, log response
-                with self.assertNumQueries(7):
+                # fetch related, rollback transaction, log response
+                with self.assertNumQueries(8):
                     response = self.client.get(res['sources'])
                 self.assertEquals(response.status_code, 200)
                 self.assertEquals(response.data['count'], 2)
@@ -374,6 +458,10 @@ class APIv1Tests(APITestCase):
         self.assertTrue(response.data['self'].startswith('http://testserver' + self.source_list_url), response.data['self'])
         data['self'] = response.data['self']
         data['builds'] = data['self'] + 'builds/'
+
+        if self.repository_should_be_embedded_in_source:
+            data['repository_info'] = self.client.get(data['repository']).data
+
         self.assertEquals(response.data, data)
         register_webhook.assert_called_with()
         response = self.client.get(data['self'])
@@ -584,6 +672,11 @@ class APIv1Tests(APITestCase):
         data['self'] = response.data['self']
         data['refresh_in_progress'] = False
         data['public'] = False
+        if self.mirror_includes_sources_list:
+            uuid = data['self'].split('/')[-2]
+            url = 'http://127.0.0.1:8000/mirrors/{0}/example.com/'.format(uuid)
+            data['sources_list'] = ('deb {0} trusty main\n'
+                                    'deb-src {0} trusty main\n').format(url)
         self.assertEquals(data, response.data)
         return response.data
 
@@ -795,9 +888,17 @@ class APIv1Tests(APITestCase):
 
     def test_create_mirrorset(self, user='eric'):
         response = self.test_create_mirror(user)
-        data = {'mirrors': [response['self']]}
+        mirror_id = response['self']
+        data = {'mirrors': [mirror_id]}
         response = self.client.post(self.mirrorset_list_url, data, format='json')
         self.assertEquals(response.status_code, 201)
+        expected_result = {'self': response.data['self'],
+                           'mirrors': [mirror_id]}
+        if self.mirrorset_includes_sources_list:
+            url = 'http://127.0.0.1:8000/mirrors/{0}/example.com/'.format(mirror_id.split('/')[-2])
+            expected_result['sources_list'] = ('deb {0} trusty main\n'
+                                               'deb-src {0} trusty main\n').format(url)
+        self.assertEquals(response.data, expected_result)
         return response.data
 
     def test_patch_mirrorset_invalid_mirror(self):
@@ -1092,6 +1193,8 @@ class APIv1Tests(APITestCase):
 
 class APIv2Tests(APIv1Tests):
     base_url = '/api/v2/'
+    view_prefix = 'v2'
+    lookup_type = 'uuid'
 
     def test_builds_default_order(self):
         authenticate(self.client, 'eric')
@@ -1196,7 +1299,13 @@ class APIv3Tests(APIv2Tests):
     base_url = '/api/v3/'
     source_should_be_embedded_in_build = True
     build_includes_duration = True
-    repository_includes_key_data = True
+    repository_includes_key_data_link = True
+    repository_includes_builds_link = True
+    view_prefix = 'v3'
+    mirrorset_includes_sources_list = True
+    mirror_includes_sources_list = True
+    repository_should_be_embedded_in_source = True
+    repository_has_build_sources_list = True
 
     def test_build_duration(self):
         authenticate(self.client, 'eric')

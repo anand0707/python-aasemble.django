@@ -4,13 +4,16 @@ from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from django.conf import settings
 from django.conf.urls import include, url
 import django.db.utils
+from django.http import HttpResponse
 
 from rest_auth.registration.views import SocialLoginView
 
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+
 
 from rest_framework_nested import routers
 
@@ -81,6 +84,12 @@ class aaSembleV1Views(object):
             def get_queryset(self):
                 if self.request.user.is_superuser:
                     return self.queryset.all()
+
+                qs = self.queryset.all()
+
+                if selff.view_prefix == 'v1':
+                    qs = qs.exclude(visible_to_v1_api=False)
+
                 return self.queryset.filter(owner_id=self.request.user.id) | self.queryset.filter(public=True)
 
             def perform_create(self, serializer):
@@ -170,6 +179,17 @@ class aaSembleV1Views(object):
                 except django.db.utils.IntegrityError:
                     raise DuplicateResourceException()
 
+            if selff.serializers.repo_has_build_sources_list:
+                @detail_route(permission_classes=[AllowAny])
+                def build_sources_list(self, request, **kwargs):
+                    repository = buildsvc_models.Repository.objects.get(uuid=self.kwargs['uuid'])
+                    build_sources_list = repository.first_series().build_sources_list()
+
+                    resp = HttpResponse(build_sources_list, 'text/plain')
+                    resp.rendered_content = build_sources_list
+
+                    return resp
+
         return RepositoryViewSet
 
     def SeriesViewSetFactory(selff):
@@ -199,7 +219,7 @@ class aaSembleV1Views(object):
             """
             lookup_field = selff.default_lookup_field
             lookup_value_regex = selff.default_lookup_value_regex
-            queryset = buildsvc_models.PackageSource.objects.select_related('series__repository__user')
+            queryset = buildsvc_models.PackageSource.objects.select_related('series__repository__user').prefetch_related('series__repository__series')
             serializer_class = selff.serializers.PackageSourceSerializer
 
             def get_queryset(self):
@@ -242,13 +262,16 @@ class aaSembleV1Views(object):
             """
             lookup_field = selff.default_lookup_field
             lookup_value_regex = selff.default_lookup_value_regex
-            queryset = buildsvc_models.BuildRecord.objects.all().select_related('source__series__repository__user')
+            queryset = buildsvc_models.BuildRecord.objects.all().select_related('source__series__repository__user').prefetch_related('source__series__repository__series')
             serializer_class = selff.serializers.BuildRecordSerializer
 
             def get_queryset(self):
                 qs = self.queryset.filter(source__series__repository__in=buildsvc_models.Repository.lookup_by_user(self.request.user))
                 if 'source_{0}'.format(selff.default_lookup_field) in self.kwargs:
                     qs = qs.filter(**selff.get_qs_filter(self.kwargs, 'source', 'source'))
+
+                if 'repository_{0}'.format(selff.default_lookup_field) in self.kwargs:
+                    qs = qs.filter(**selff.get_qs_filter(self.kwargs, 'source__series__repository', 'repository'))
 
                 return qs
 
@@ -270,6 +293,7 @@ class aaSembleV1Views(object):
         repository_router = routers.NestedSimpleRouter(router, r'repositories', lookup='repository')
         repository_router.register(r'sources', self.PackageSourceViewSet, base_name='{0}_packagesource'.format(self.view_prefix))
         repository_router.register(r'external_dependencies', self.ExternalDependencyViewSet, base_name='{0}_externaldependency'.format(self.view_prefix))
+        repository_router.register(r'builds', self.BuildViewSet, base_name='{0}_build'.format(self.view_prefix))
 
         urls = [url(r'^', include(router.urls)),
                 url(r'^', include(repository_router.urls)),
