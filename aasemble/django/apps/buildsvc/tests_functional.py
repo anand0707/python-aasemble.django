@@ -12,6 +12,8 @@ from aasemble.django.apps.buildsvc.test.basewebobject import WebObject
 
 from aasemble.django.tests import create_session_cookie
 
+from test_project.settings import MIRRORSVC_BASE_PATH
+
 
 @skipIf(os.environ.get('SKIP_SELENIUM_TESTS', '') == '1',
         'Skipping Selenium based test, because SKIP_SELENIUM_TESTS=1')
