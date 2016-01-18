@@ -95,9 +95,9 @@ class RepositoryFunctionalTests(WebObject):
         mirrorsPage.click_on_mirror_uuid(url)
         # Verfies if URL value  is visible after clicking on uuid
         # self.assertTrue(mirrorsPage.verify_mirror_value_visible(url))
-        print("\n##############################\n")
-        print(self.driver.page_source)
-        print("\n##############################\n")
+        print (MIRRORSVC_BASE_PATH)
+        p = os.popen("ls -l MIRRORSVC_BASE_PATH").read()
+        print (p)
         mirrorsPage.delete_button.click()
         self.assertFalse(mirrorsPage.verify_mirror_visible_by_url(url))
 
